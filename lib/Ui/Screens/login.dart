@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controllers/login_controllers.dart';
 import '../../Controllers/users_controller.dart';
+import 'package:flutter/services.dart';
 
 import '../../Consts/consts.dart';
 import '../../Controllers/file_controller.dart';
@@ -17,12 +18,43 @@ class LoginScreen extends StatelessWidget {
     final FileController fileController = Get.find<FileController>();
     final LoginController loginController = Get.find<LoginController>();
     final UsersController usersController = Get.find<UsersController>();
-    // loginController
-    //     .addUser(User(id: 408000000, name: 'test', password: '123123123'));
+
+    void _loginAction() async {
+      if (loginController.form.currentState!.validate()) {
+        if (loginController.checkUser(loginController.idController.text,
+            loginController.passwordController.text)) {
+          await usersController
+              .getuser(int.parse(loginController.idController.text));
+          await usersController.getUsers();
+          fileController.getFiles();
+          fileController.getInjuredFiles();
+          fileController.getKidsFiles();
+          fileController.getWomansFiles();
+          fileController.getCancerFiles();
+          fileController.getDeadsFiles();
+          await fileController.getNumOfDeads();
+          fileController.getNumOfInjured();
+          await fileController.getNumOfWoman();
+          fileController.getNumOfCancer();
+          await fileController.getNumOfKids();
+
+          Get.to(() => HomeScreen());
+        }
+      }
+    }
 
     return Scaffold(
-        backgroundColor: Consts.backgroundColor,
-        body: Center(
+      backgroundColor: Consts.backgroundColor,
+      body: RawKeyboardListener(
+        focusNode: FocusNode(),
+        autofocus: true,
+        onKey: (RawKeyEvent event) {
+          if (event is RawKeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.enter) {
+            _loginAction(); // Trigger the login action when Enter is pressed
+          }
+        },
+        child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 50.w),
             child: Column(
@@ -77,34 +109,11 @@ class LoginScreen extends StatelessWidget {
                             height: 50,
                           ),
                           ElevatedButton(
-                            onPressed: () async {
-                              if (loginController.form.currentState!
-                                  .validate()) {
-                                if (loginController.checkUser(
-                                    loginController.idController.text,
-                                    loginController.passwordController.text)) {
-                                  await usersController.getuser(int.parse(
-                                      loginController.idController.text));
-                                  await usersController.getUsers();
-                                  fileController.getFiles();
-                                  fileController.getInjuredFiles();
-                                  fileController.getKidsFiles();
-                                  fileController.getWomansFiles();
-                                  fileController.getCancerFiles();
-                                  fileController.getDeadsFiles();
-                                  await fileController.getNumOfDeads();
-                                  fileController.getNumOfInjured();
-                                  await fileController.getNumOfWoman();
-                                  fileController.getNumOfCancer();
-                                  await fileController.getNumOfKids();
-
-                                  Get.to(() => HomeScreen());
-                                }
-                              }
-                            },
+                            onPressed: _loginAction, // Attach the login action
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
                               backgroundColor: Colors.white,
                               foregroundColor: Consts.backgroundColor,
                             ),
@@ -114,10 +123,12 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
