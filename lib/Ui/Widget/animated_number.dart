@@ -8,7 +8,7 @@ class AnimatedNumber extends StatelessWidget {
   const AnimatedNumber({
     Key? key,
     required this.targetNumber,
-    this.duration = const Duration(seconds: 1),
+    this.duration = const Duration(milliseconds: 500),
   }) : super(key: key);
 
   @override

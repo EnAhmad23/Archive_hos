@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:test_2/Ui/Widget/delete_woring.dart';
 import '../../Controllers/users_controller.dart';
 import '../../Ui/Widget/animated_number.dart';
 import '../../Ui/Widget/my_button.dart';
 
 import '../../Controllers/file_controller.dart';
+import '../Widget/Woring.dart';
 import '../Widget/file_table.dart';
 import '../Widget/info_card.dart';
 
@@ -28,16 +30,16 @@ class MainScreen extends StatelessWidget {
               height: 50.h,
             ),
             SizedBox(
-              height: 250.h,
+              height: 200.h,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: GridView(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
+                    crossAxisCount: 8,
+                    crossAxisSpacing: 10.w,
+                    mainAxisSpacing: 20.w,
                     childAspectRatio:
-                        MediaQuery.of(context).size.width < 1400 ? 1.1 : 1.4,
+                        MediaQuery.of(context).size.width < 1400 ? 1 : 1.2,
                   ),
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
@@ -76,6 +78,29 @@ class MainScreen extends StatelessWidget {
                         targetNumber: fileController.numOfCancer,
                       ),
                     ),
+                    InfoCard(
+                      icon: 'assets/icons/surgery.svg',
+                      title: 'عدد حالات الجراحة',
+                      subtitle: AnimatedNumber(
+                        targetNumber: fileController.numOfCancer,
+                      ),
+                    ),
+                    InfoCard(
+                      icon: 'assets/icons/assault.svg',
+                      title: 'عدد حالات الإعتداء',
+                      subtitle: AnimatedNumber(
+                        targetNumber: fileController.numOfCancer,
+                      ),
+                    ),
+                    SizedBox(
+                      child: InfoCard(
+                        icon: 'assets/icons/dead.svg',
+                        title: 'عدد حالات الوفيات',
+                        subtitle: AnimatedNumber(
+                          targetNumber: fileController.numOfCancer,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -96,8 +121,19 @@ class MainScreen extends StatelessWidget {
                   const Spacer(),
                   if (usersController.currentUser!.auths.contains(5))
                     MyButton(
-                        onPressed: () => fileController
-                            .pickAndReadExcel(usersController.currentUser!),
+                        onPressed: () {
+                          Get.dialog(Woring(
+                            title:
+                                '''يجب أن يكون الملف من نوع إكسل و ان يكون من 4 أعمدة\n رقم الملف ,رقم الهوية , الأسم  , التاريخ بالترتيب''',
+                            operation: 'إستيراد',
+                            onTap: () {
+                              fileController.pickAndReadExcel(
+                                  usersController.currentUser!,
+                                  fileController.catoger);
+                              Get.back();
+                            },
+                          ));
+                        },
                         text: 'استيراد ملف')
                 ],
               ),

@@ -18,16 +18,20 @@ class UpdateFileDialog extends StatelessWidget {
   final FileController fileController;
   final PatientsController patientController;
   final int? index;
+  final String? temp;
 
   const UpdateFileDialog({
     super.key,
     required this.fileController,
     required this.patientController,
     this.index,
+    this.temp,
   });
 
   @override
   Widget build(BuildContext context) {
+    var oldId = int.parse(fileController.idController.text);
+    log('old id -> $oldId');
     return Dialog(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 30.h),
@@ -138,28 +142,31 @@ class UpdateFileDialog extends StatelessWidget {
 
                           // fileController.catoger =
                           //     fileController.catogerController.text;
-                          var y = patientController.updatePatient(Patient(
+                          var y = await patientController.updatePatient(Patient(
                             id: int.parse(
                                 fileController.patientIdController.text),
                             name: fileController.patientNameController.text,
                           ));
                           log('y -> $y');
-                          var x = fileController.updateFile(AppFile(
-                            id: int.tryParse(
-                                    fileController.idController.text) ??
-                                0,
-                            patientId: int.tryParse(
-                                    fileController.patientIdController.text) ??
-                                0,
-                            category: fileController.catoger ?? '',
-                            date: fileController.date!,
-                            patientName:
-                                fileController.patientNameController.text,
-                            userName: '',
-                          ));
+                          log('id -> ${fileController.idController.text}');
+                          var x = await fileController.updateFile(
+                              AppFile(
+                                id: oldId,
+                                patientId: int.tryParse(fileController
+                                        .patientIdController.text) ??
+                                    0,
+                                category: fileController.catoger ?? '',
+                                date: fileController.date!,
+                                patientName:
+                                    fileController.patientNameController.text,
+                                userName: '',
+                              ),
+                              int.tryParse(fileController.idController.text) ??
+                                  0);
                           log('x -> $x');
                           Get.back();
                           if (x != 0 || y != 0) {
+                            log('index -> $index');
                             if (index != null && index == 1) {
                               await fileController.getFiles();
                               fileController.filterItems(
@@ -168,26 +175,64 @@ class UpdateFileDialog extends StatelessWidget {
                               switch (fileController.catoger) {
                                 case 'شهداء':
                                   await fileController.getDeadsFiles();
+                                  await fileController.getNumOfDeads();
                                   fileController.filterItems(
                                       '', fileController.daeds);
                                   break;
                                 case 'جرحى':
                                   await fileController.getInjuredFiles();
+                                  await fileController.getNumOfInjured();
                                   fileController.filterItems(
                                       '', fileController.injureds);
                                   break;
                                 case 'أطفال':
                                   await fileController.getKidsFiles();
+                                  await fileController.getNumOfKids();
                                   fileController.filterItems(
                                       '', fileController.kids);
                                   break;
                                 case 'نساء':
                                   await fileController.getWomansFiles();
+                                  await fileController.getNumOfWoman();
                                   fileController.filterItems(
                                       '', fileController.womans);
                                   break;
                                 case 'أورام':
                                   await fileController.getCancerFiles();
+                                  await fileController.getNumOfCancer();
+                                  fileController.filterItems(
+                                      '', fileController.cancers);
+                                  break;
+                                default:
+                              }
+                              switch (temp) {
+                                case 'شهداء':
+                                  await fileController.getDeadsFiles();
+                                  await fileController.getNumOfDeads();
+                                  fileController.filterItems(
+                                      '', fileController.daeds);
+                                  break;
+                                case 'جرحى':
+                                  await fileController.getInjuredFiles();
+                                  await fileController.getNumOfInjured();
+                                  fileController.filterItems(
+                                      '', fileController.injureds);
+                                  break;
+                                case 'أطفال':
+                                  await fileController.getKidsFiles();
+                                  await fileController.getNumOfKids();
+                                  fileController.filterItems(
+                                      '', fileController.kids);
+                                  break;
+                                case 'نساء':
+                                  await fileController.getWomansFiles();
+                                  await fileController.getNumOfWoman();
+                                  fileController.filterItems(
+                                      '', fileController.womans);
+                                  break;
+                                case 'أورام':
+                                  await fileController.getCancerFiles();
+                                  await fileController.getNumOfCancer();
                                   fileController.filterItems(
                                       '', fileController.cancers);
                                   break;

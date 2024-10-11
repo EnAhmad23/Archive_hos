@@ -113,6 +113,27 @@ class AddUserDialog extends StatelessWidget {
                             usersController.changCancer(value ?? false);
                           },
                         ),
+                        Mycheckbox(
+                          label: 'جراحات',
+                          value: usersController.surgery,
+                          onChanged: (bool? value) {
+                            usersController.changSurgery(value ?? false);
+                          },
+                        ),
+                        Mycheckbox(
+                          label: 'إعتداء',
+                          value: usersController.assault,
+                          onChanged: (bool? value) {
+                            usersController.changAssault(value ?? false);
+                          },
+                        ),
+                        Mycheckbox(
+                          label: 'وفيات',
+                          value: usersController.nDead,
+                          onChanged: (bool? value) {
+                            usersController.changNDead(value ?? false);
+                          },
+                        ),
                       ],
                     );
                   }),
@@ -190,6 +211,7 @@ class AddUserDialog extends StatelessWidget {
                             );
                             await usersController.getUsers();
                             await loginController.getIds();
+                            await loginController.getUsers();
                             usersController.filterItems(
                                 '', usersController.users);
                           }

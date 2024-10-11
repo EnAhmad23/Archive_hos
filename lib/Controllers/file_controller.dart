@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 // import 'package:sqflite/sqflite.dart';
 import '../../Controllers/patients_controller.dart';
 import '../../models/database_model.dart';
@@ -32,6 +33,9 @@ class FileController extends GetxController {
   int? _numOfInjured;
   int? _numOfWoman;
   int? _numOfCancer;
+  int? _numOfSurgery;
+  int? _numOfAssault;
+  int? _numOfNDead;
   late double maxNum;
   String? _patientName;
   String? _catoger;
@@ -44,6 +48,9 @@ class FileController extends GetxController {
   List<AppFile>? womans;
   List<AppFile>? injureds;
   List<AppFile>? cancers;
+  List<AppFile>? surgery;
+  List<AppFile>? assault;
+  List<AppFile>? nDead;
   var isLoading = true.obs;
   List<Map<String, dynamic>>? numberOfFileOfUsers;
   List<Map<String, dynamic>>? numForCatoger;
@@ -102,6 +109,21 @@ class FileController extends GetxController {
 
   set numOfDeads(int? num) {
     _numOfDeads = num;
+    update();
+  }
+
+  set numOfNDeads(int? num) {
+    _numOfNDead = num;
+    update();
+  }
+
+  set numOfSurgery(int? num) {
+    _numOfSurgery = num;
+    update();
+  }
+
+  set numOfAssault(int? num) {
+    _numOfAssault = num;
     update();
   }
 
@@ -286,6 +308,36 @@ class FileController extends GetxController {
     update();
   }
 
+  Future<void> getSurgeryFiles() async {
+    List<Map<String, Object?>> re = await _dbModel.getSurgeryFiles();
+    surgery = re
+        .map(
+          (e) => AppFile.fromMap(e),
+        )
+        .toList();
+    update();
+  }
+
+  Future<void> getAssaultFiles() async {
+    List<Map<String, Object?>> re = await _dbModel.getAssaultFiles();
+    assault = re
+        .map(
+          (e) => AppFile.fromMap(e),
+        )
+        .toList();
+    update();
+  }
+
+  Future<void> getNDeadFiles() async {
+    List<Map<String, Object?>> re = await _dbModel.getNDaedFiles();
+    nDead = re
+        .map(
+          (e) => AppFile.fromMap(e),
+        )
+        .toList();
+    update();
+  }
+
   getNumOfDeads() async {
     int? x = await _dbModel.getNumOfDeads();
     numOfDeads = x;
@@ -310,6 +362,27 @@ class FileController extends GetxController {
   getNumOfCancer() async {
     int? x = await _dbModel.getNumOfCancer();
     numOfCancer = x;
+    update();
+    return x;
+  }
+
+  getNumOfSurgery() async {
+    int? x = await _dbModel.getNumOfSurgery();
+    numOfSurgery = x;
+    update();
+    return x;
+  }
+
+  getNumOfAssault() async {
+    int? x = await _dbModel.getNumOfAssault();
+    numOfAssault = x;
+    update();
+    return x;
+  }
+
+  getNumOfNDead() async {
+    int? x = await _dbModel.getNumOfNDeads();
+    numOfNDeads = x;
     update();
     return x;
   }
@@ -362,8 +435,8 @@ class FileController extends GetxController {
     return x;
   }
 
-  Future<int> updateFile(AppFile file) async {
-    int x = await _dbModel.updateFile(file);
+  Future<int> updateFile(AppFile file, int newId) async {
+    int x = await _dbModel.updateFile(file, newId);
     log(file.toString());
     log('$x');
     return x;
@@ -395,7 +468,7 @@ class FileController extends GetxController {
     update();
   }
 
-  Future<void> pickAndReadExcel(User user) async {
+  Future<void> pickAndReadExcel(User user, String? category) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['xlsx', 'xls'],
@@ -419,8 +492,8 @@ class FileController extends GetxController {
             id: int.parse(row[0]?.value.toString() ?? '0'),
             patientId: int.parse(row[1]?.value.toString() ?? '0'),
             patientName: row[2]?.value.toString() ?? '',
-            category: row[3]?.value.toString() ?? '',
-            date: DateTime.tryParse(row[4]?.value.toString() ?? '') ??
+            category: category ?? '',
+            date: DateTime.tryParse(row[3]?.value.toString() ?? '') ??
                 DateTime.now(),
             userName: user.name,
           ));
@@ -443,5 +516,58 @@ class FileController extends GetxController {
     filterItems('', injureds);
     filterItems('', kids);
     filterItems('', womans);
+  }
+
+  Future<void> exportFileTableToExcel() async {
+    DbModel dbModel = DbModel();
+    await dbModel.initDataBase();
+
+    // Check for storage permission
+    if (await Permission.storage.request().isGranted) {
+      // Let the user pick a directory where the file will be saved
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory != null) {
+        var excel = Excel.createExcel();
+        String sheetName = "Files";
+
+        // Create or access the sheet
+        Sheet sheetObject = excel[sheetName];
+
+        // Add headers
+        sheetObject.appendRow([
+          TextCellValue('التاريخ'),
+          TextCellValue('الفئة'),
+          TextCellValue('الأسم'),
+          TextCellValue('رقم الهوية'),
+          TextCellValue('رقم الملف'),
+        ]);
+
+        // Add data rows from the file table
+        for (var row in files!) {
+          sheetObject.appendRow([
+            TextCellValue('${row.date}'),
+            TextCellValue(row.category),
+            TextCellValue(row.patientName),
+            TextCellValue('${row.patientId}'),
+            TextCellValue('${row.id}'),
+          ]);
+        }
+
+        // Save the file in the selected directory
+        String filePath = '$selectedDirectory/FileData.xlsx';
+
+        // Save the file
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(excel.encode()!);
+
+        print("Excel file exported to: $filePath");
+      } else {
+        print("No directory selected.");
+      }
+    } else {
+      print("Storage permission denied.");
+    }
   }
 }

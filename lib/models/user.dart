@@ -40,7 +40,7 @@ class User {
     if (auths.contains(1)) {
       stringAuth.add('جرحى');
     }
-    if (auths.contains(3)) {
+    if (auths.contains(2)) {
       stringAuth.add('أطفال');
     }
     if (auths.contains(3)) {
@@ -48,6 +48,15 @@ class User {
     }
     if (auths.contains(4)) {
       stringAuth.add('أورام');
+    }
+    if (auths.contains(6)) {
+      stringAuth.add('جراحات');
+    }
+    if (auths.contains(7)) {
+      stringAuth.add('إعتداءات');
+    }
+    if (auths.contains(8)) {
+      stringAuth.add('وفيات');
     }
     String x = stringAuth.join(',');
     stringAuth.clear();

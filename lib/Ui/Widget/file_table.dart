@@ -70,7 +70,8 @@ class FileTable extends StatelessWidget {
                   ),
                   const DataColumn(label: Text('الأسم')),
                   const DataColumn(label: Text('الفئة')),
-                  const DataColumn(label: Text('اسم المدخل')),
+                  DataColumn(
+                      label: SizedBox(width: 100.w, child: Text('اسم المدخل'))),
                   DataColumn(
                       label:
                           SizedBox(width: 100.w, child: const Text('التاريخ'))),
@@ -126,7 +127,7 @@ class FileTable extends StatelessWidget {
                         style: TextStyle(fontSize: 16.sp),
                       )),
                       DataCell(Text(
-                        usersController.currentUser?.name ?? 'null',
+                        file.userName,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16.sp),
                       )),
@@ -145,6 +146,7 @@ class FileTable extends StatelessWidget {
                           onPressed: () {
                             fileController.initData(file);
                             Get.dialog(UpdateFileDialog(
+                                temp: file.category,
                                 index: index,
                                 fileController: fileController,
                                 patientController: patientController));

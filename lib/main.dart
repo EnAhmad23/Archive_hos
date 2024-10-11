@@ -24,13 +24,27 @@ void main() async {
     win.title = "أرشيف";
     win.show();
   });
-  await DbModel().intiDataBase();
-  LoginController loginController = LoginController();
-  var check = await loginController.checkUserIn('0');
+  var database = await DbModel().initDataBase();
 
-  if (!check) {
-    loginController.addUser(User(
-        id: 0, name: 'admin', password: 'admin', auths: [0, 1, 2, 3, 4, 5]));
+  if (database != null) {
+    LoginController loginController = LoginController();
+    var check = await loginController.checkUserIn('900223678');
+
+    if (!check) {
+      loginController.addUser(User(
+          id: 900223678,
+          name: 'أبو راشد',
+          password: '900223678',
+          auths: [0, 1, 2, 3, 4, 5, 6, 7, 8]));
+    }
+    var adminCheck = await loginController.checkUserIn('1000');
+    if (!adminCheck) {
+      loginController.addUser(User(
+          id: 1000,
+          name: 'قسم الحاسوب',
+          password: '1000',
+          auths: [0, 1, 2, 3, 4, 5, 6, 7, 8]));
+    }
   }
   runApp(const MyApp());
 }

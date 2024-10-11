@@ -143,26 +143,31 @@ class AddFileDialog extends StatelessWidget {
                           switch (index) {
                             case 0:
                               await fileController.getDeadsFiles();
+                              await fileController.getNumOfDeads();
                               fileController.filterItems(
                                   '', fileController.daeds);
                               break;
                             case 1:
                               await fileController.getInjuredFiles();
+                              await fileController.getNumOfInjured();
                               fileController.filterItems(
                                   '', fileController.injureds);
                               break;
                             case 2:
                               await fileController.getKidsFiles();
+                              await fileController.getNumOfKids();
                               fileController.filterItems(
                                   '', fileController.kids);
                               break;
                             case 3:
                               await fileController.getWomansFiles();
+                              await fileController.getNumOfWoman();
                               fileController.filterItems(
                                   '', fileController.womans);
                               break;
                             case 4:
                               await fileController.getCancerFiles();
+                              await fileController.getNumOfCancer();
                               fileController.filterItems(
                                   '', fileController.cancers);
                               break;

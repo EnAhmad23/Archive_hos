@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_side_menu/flutter_side_menu.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:test_2/Ui/Screens/assault_screen.dart';
+import 'package:test_2/Ui/Screens/natural_screen.dart';
 import '../../Consts/consts.dart';
 import '../../Controllers/file_controller.dart';
 import '../../Controllers/home_controller.dart';
@@ -20,6 +22,7 @@ import '../../Ui/Screens/woman_screen.dart';
 
 import 'dead_screen.dart';
 import 'main_screen.dart';
+import 'surgery_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final _controller = SideMenuController();
@@ -91,10 +94,11 @@ class HomeScreen extends StatelessWidget {
                         margin:
                             const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                         isSelected: homeController.index == 0,
-                        onTap: () {
+                        onTap: () async {
                           if (homeController.index != 0) {
                             _pageCon.jumpToPage(0);
                             homeController.index = 0;
+                            await fileController.getFiles();
                           }
                         },
                         title: 'الصفحة الرئيسية  ',
@@ -125,11 +129,12 @@ class HomeScreen extends StatelessWidget {
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                           isSelected: homeController.index == 1,
-                          onTap: () {
+                          onTap: () async {
                             if (homeController.index != 1) {
                               _pageCon.jumpToPage(1);
                               homeController.index = 1;
                             }
+                            await fileController.getDeadsFiles();
                             fileController.filterItems(
                                 '', fileController.daeds);
                             log('************* ${fileController.daeds?.length}');
@@ -162,12 +167,12 @@ class HomeScreen extends StatelessWidget {
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                           isSelected: homeController.index == 2,
-                          onTap: () {
+                          onTap: () async {
                             if (homeController.index != 2) {
                               _pageCon.jumpToPage(2);
                               homeController.index = 2;
                             }
-
+                            await fileController.getInjuredFiles();
                             fileController.filterItems(
                                 '', fileController.injureds);
                           },
@@ -196,12 +201,12 @@ class HomeScreen extends StatelessWidget {
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                           isSelected: homeController.index == 3,
-                          onTap: () {
+                          onTap: () async {
                             if (homeController.index != 3) {
                               _pageCon.jumpToPage(3);
                               homeController.index = 3;
                             }
-                            // fileController.getKidsFiles();
+                            await fileController.getKidsFiles();
                             fileController.filterItems('', fileController.kids);
                           },
                           title: 'الاطفال',
@@ -226,11 +231,12 @@ class HomeScreen extends StatelessWidget {
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                           isSelected: homeController.index == 4,
-                          onTap: () {
+                          onTap: () async {
                             if (homeController.index != 4) {
                               _pageCon.jumpToPage(4);
                               homeController.index = 4;
                             }
+                            await fileController.getWomansFiles();
                             fileController.filterItems(
                                 '', fileController.womans);
                           },
@@ -262,11 +268,12 @@ class HomeScreen extends StatelessWidget {
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                           isSelected: homeController.index == 5,
-                          onTap: () {
+                          onTap: () async {
                             if (homeController.index != 5) {
                               _pageCon.jumpToPage(5);
                               homeController.index = 5;
                             }
+                            await fileController.getCancerFiles();
                             fileController.filterItems(
                                 '', fileController.cancers);
                           },
@@ -294,16 +301,124 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (usersController.currentUser!.auths.contains(5))
+                      if (usersController.currentUser!.auths.contains(6))
                         SideMenuItemDataTile(
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
                           isSelected: homeController.index == 6,
-                          onTap: () {
+                          onTap: () async {
                             if (homeController.index != 6) {
                               _pageCon.jumpToPage(6);
                               homeController.index = 6;
                             }
+                            await fileController.getSurgeryFiles();
+                          },
+                          title: 'الجراحات',
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(3),
+                          ),
+                          hoverColor: Colors.blue,
+                          titleStyle: const TextStyle(
+                              color: Color(0xFFfef7ff), fontSize: 16),
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset('assets/icons/surgery.svg',
+                                color: const Color(0xFFfef7ff)),
+                          ),
+                          selectedIcon: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxHeight: 1,
+                              maxWidth: 1,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child:
+                                  SvgPicture.asset('assets/icons/surgery.svg'),
+                            ),
+                          ),
+                        ),
+                      if (usersController.currentUser!.auths.contains(7))
+                        SideMenuItemDataTile(
+                          margin:
+                              const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
+                          isSelected: homeController.index == 7,
+                          onTap: () async {
+                            if (homeController.index != 7) {
+                              _pageCon.jumpToPage(7);
+                              homeController.index = 7;
+                            }
+                            await fileController.getAssaultFiles();
+                          },
+                          title: 'الإعتداءات',
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(3),
+                          ),
+                          hoverColor: Colors.blue,
+                          titleStyle: const TextStyle(
+                              color: Color(0xFFfef7ff), fontSize: 16),
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset('assets/icons/assault.svg',
+                                color: const Color(0xFFfef7ff)),
+                          ),
+                          selectedIcon: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxHeight: 1,
+                              maxWidth: 1,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child:
+                                  SvgPicture.asset('assets/icons/assault.svg'),
+                            ),
+                          ),
+                        ),
+                      if (usersController.currentUser!.auths.contains(8))
+                        SideMenuItemDataTile(
+                          margin:
+                              const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
+                          isSelected: homeController.index == 8,
+                          onTap: () async {
+                            if (homeController.index != 8) {
+                              _pageCon.jumpToPage(8);
+                              homeController.index = 8;
+                            }
+                            await fileController.getNDeadFiles();
+                          },
+                          title: 'الوفيات',
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(3),
+                          ),
+                          hoverColor: Colors.blue,
+                          titleStyle: const TextStyle(
+                              color: Color(0xFFfef7ff), fontSize: 16),
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset('assets/icons/dead.svg',
+                                color: const Color(0xFFfef7ff)),
+                          ),
+                          selectedIcon: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxHeight: 1,
+                              maxWidth: 1,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SvgPicture.asset('assets/icons/dead.svg'),
+                            ),
+                          ),
+                        ),
+                      if (usersController.currentUser!.auths.contains(5))
+                        SideMenuItemDataTile(
+                          margin:
+                              const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
+                          isSelected: homeController.index == 9,
+                          onTap: () async {
+                            if (homeController.index != 9) {
+                              _pageCon.jumpToPage(9);
+                              homeController.index = 9;
+                            }
+                            await usersController.getUsers();
                             usersController.filterItems(
                                 '', usersController.users);
                           },
@@ -334,11 +449,11 @@ class HomeScreen extends StatelessWidget {
                         SideMenuItemDataTile(
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),
-                          isSelected: homeController.index == 7,
+                          isSelected: homeController.index == 10,
                           onTap: () async {
-                            if (homeController.index != 7) {
-                              _pageCon.jumpToPage(7);
-                              homeController.index = 7;
+                            if (homeController.index != 10) {
+                              _pageCon.jumpToPage(10);
+                              homeController.index = 10;
                             }
                             await fileController.loadData();
                           },
@@ -365,6 +480,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+
                       // SideMenuItemDataTile(
                       //   margin: EdgeInsetsDirectional.fromSTEB(
                       //       4.w, 200.h, 4.h, 0.w),
@@ -412,6 +528,9 @@ class HomeScreen extends StatelessWidget {
                 KidsScreen(),
                 WomanScreen(),
                 CancerScreen(),
+                SurgeryScreen(),
+                AssaultScreen(),
+                NaturalScreen(),
                 UserScreen(),
                 StatisticsScreen()
               ],

@@ -3,7 +3,7 @@
 
 #define MyAppName "أرشيف"
 #define MyAppVersion "1"
-#define MyAppExeName "test_2.exe"
+#define MyAppExeName "archive.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -38,6 +38,22 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\bitsdojo_window_windows_plugin.lib"; DestDir: "{app}"; Flags: ignoreversion

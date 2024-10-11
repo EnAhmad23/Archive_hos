@@ -21,36 +21,33 @@ class InfoCard extends StatelessWidget {
       elevation: 1,
       child: Container(
         padding:
-            EdgeInsets.only(top: 20.h, bottom: 30.h, left: 20.w, right: 40.w),
+            EdgeInsets.only(top: 10.h, bottom: 5.h, left: 10.w, right: 10.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
           color: Colors.white,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          child: Stack(
+          padding: EdgeInsets.symmetric(vertical: 2.5.h),
+          child: Column(
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: SvgPicture.asset(
-                  icon,
-                  width: 55.w,
-                  // ignore: deprecated_member_use
-                  color: Consts.backgroundColor,
-                ),
+              SvgPicture.asset(
+                icon,
+                width: 50.w,
+                height: 45.sp,
+                // ignore: deprecated_member_use
+                color: Consts.backgroundColor,
               ),
               SizedBox(
-                height: 20.h,
+                height: 10.h,
               ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  title,
-                  style:
-                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800),
-                ),
+              Text(
+                title,
+                style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w800),
               ),
-              Align(alignment: Alignment.bottomCenter, child: subtitle),
+              SizedBox(
+                height: 10.sp,
+              ),
+              SizedBox(child: subtitle),
             ],
           ),
         ),

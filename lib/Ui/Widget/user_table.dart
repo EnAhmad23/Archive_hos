@@ -121,16 +121,18 @@ class UsersTable extends StatelessWidget {
                         SizedBox(
                           width: 5.w,
                         ),
-                        IconButton(
-                            onPressed: () {
-                              Get.dialog(DeleteWoring(
-                                id: user.id,
-                              ));
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            )),
+                        (user.auth.contains('Admin'))
+                            ? const SizedBox()
+                            : IconButton(
+                                onPressed: () {
+                                  Get.dialog(DeleteWoring(
+                                    id: user.id,
+                                  ));
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                )),
                       ],
                     ))
                   ],

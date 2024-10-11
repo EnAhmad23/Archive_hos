@@ -126,29 +126,39 @@ class StatisticsScreen extends StatelessWidget {
                           ),
                           bottomTitles: AxisTitles(
                             sideTitles: SideTitles(
-                              reservedSize: 50.sp,
+                              reservedSize: 95
+                                  .h, // Increase the space reserved for X-axis labels
                               showTitles: true,
                               getTitlesWidget: (value, meta) {
                                 final index = value.toInt();
                                 if (fileController.numberOfFileOfUsers !=
                                         null &&
-                                    // index >= 0 &&
                                     index <
                                         fileController
                                             .numberOfFileOfUsers!.length) {
                                   final userName = fileController
                                       .numberOfFileOfUsers![index]['user_name'];
+
+                                  // Split the username into lines (you can modify this as per your requirement)
+                                  final formattedUserName =
+                                      userName.toString().replaceAll(' ', '\n');
+
                                   return SideTitleWidget(
-                                      axisSide: meta.axisSide,
-                                      child: Text(
-                                        userName.toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600),
-                                      ));
+                                    axisSide: meta.axisSide,
+                                    child: Text(
+                                      formattedUserName,
+                                      textAlign: TextAlign
+                                          .center, // Center the text vertically
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
                                 }
                                 return SideTitleWidget(
-                                    axisSide: meta.axisSide,
-                                    child: const Text(''));
+                                  axisSide: meta.axisSide,
+                                  child: const Text(''),
+                                );
                               },
                             ),
                           ),

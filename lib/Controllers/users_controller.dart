@@ -26,6 +26,9 @@ class UsersController extends GetxController {
   bool kids = false;
   bool woman = false;
   bool cancer = false;
+  bool surgery = false;
+  bool assault = false;
+  bool nDead = false;
   List<int> authList = [];
   List<int> updateAuth = [];
 
@@ -78,6 +81,21 @@ class UsersController extends GetxController {
 
   changCancer(bool value) {
     cancer = value;
+    update();
+  }
+
+  changSurgery(bool value) {
+    surgery = value;
+    update();
+  }
+
+  changAssault(bool value) {
+    assault = value;
+    update();
+  }
+
+  changNDead(bool value) {
+    nDead = value;
     update();
   }
 
@@ -206,6 +224,15 @@ class UsersController extends GetxController {
     if (cancer) {
       authList.add(4);
     }
+    if (surgery) {
+      authList.add(6);
+    }
+    if (assault) {
+      authList.add(7);
+    }
+    if (nDead) {
+      authList.add(8);
+    }
   }
 
   addUpdateAuth() {
@@ -224,6 +251,15 @@ class UsersController extends GetxController {
     if (cancer) {
       updateAuth.add(4);
     }
+    if (surgery) {
+      updateAuth.add(6);
+    }
+    if (assault) {
+      updateAuth.add(7);
+    }
+    if (nDead) {
+      updateAuth.add(8);
+    }
   }
 
   initData(User user) {
@@ -241,6 +277,15 @@ class UsersController extends GetxController {
     }
     if (user.auths.contains(4)) {
       changCancer(true);
+    }
+    if (user.auths.contains(6)) {
+      changSurgery(true);
+    }
+    if (user.auths.contains(7)) {
+      changAssault(true);
+    }
+    if (user.auths.contains(8)) {
+      changNDead(true);
     }
   }
 
