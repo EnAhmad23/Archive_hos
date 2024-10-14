@@ -54,6 +54,7 @@ class FileController extends GetxController {
   var isLoading = true.obs;
   List<Map<String, dynamic>>? numberOfFileOfUsers;
   List<Map<String, dynamic>>? numForCatoger;
+  TextEditingController fileNameController = TextEditingController();
   TextEditingController idController = TextEditingController();
   TextEditingController patientIdController = TextEditingController();
   TextEditingController patientNameController = TextEditingController();
@@ -523,51 +524,55 @@ class FileController extends GetxController {
     await dbModel.initDataBase();
 
     // Check for storage permission
-    if (await Permission.storage.request().isGranted) {
-      // Let the user pick a directory where the file will be saved
-      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (fromKey.currentState!.validate()) {
+      if (await Permission.storage.request().isGranted) {
+        // Let the user pick a directory where the file will be saved
+        String? selectedDirectory =
+            await FilePicker.platform.getDirectoryPath();
 
-      if (selectedDirectory != null) {
-        var excel = Excel.createExcel();
-        String sheetName = "Files";
+        if (selectedDirectory != null) {
+          var excel = Excel.createExcel();
+          String sheetName = "Files";
 
-        // Create or access the sheet
-        Sheet sheetObject = excel[sheetName];
+          // Create or access the sheet
+          Sheet sheetObject = excel[sheetName];
 
-        // Add headers
-        sheetObject.appendRow([
-          TextCellValue('التاريخ'),
-          TextCellValue('الفئة'),
-          TextCellValue('الأسم'),
-          TextCellValue('رقم الهوية'),
-          TextCellValue('رقم الملف'),
-        ]);
-
-        // Add data rows from the file table
-        for (var row in files!) {
+          // Add headers
           sheetObject.appendRow([
-            TextCellValue('${row.date}'),
-            TextCellValue(row.category),
-            TextCellValue(row.patientName),
-            TextCellValue('${row.patientId}'),
-            TextCellValue('${row.id}'),
+            TextCellValue('التاريخ'),
+            TextCellValue('الفئة'),
+            TextCellValue('الأسم'),
+            TextCellValue('رقم الهوية'),
+            TextCellValue('رقم الملف'),
           ]);
+
+          // Add data rows from the file table
+          for (var row in files!) {
+            sheetObject.appendRow([
+              TextCellValue('${row.date}'),
+              TextCellValue(row.category),
+              TextCellValue(row.patientName),
+              TextCellValue('${row.patientId}'),
+              TextCellValue('${row.id}'),
+            ]);
+          }
+
+          // Save the file in the selected directory
+          String filePath =
+              '$selectedDirectory/${fileNameController.text}.xlsx';
+
+          // Save the file
+          File(filePath)
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(excel.encode()!);
+
+          print("$filePath  تم تصدير ملف الاكسل الى : ");
+        } else {
+          print("No directory selected.");
         }
-
-        // Save the file in the selected directory
-        String filePath = '$selectedDirectory/FileData.xlsx';
-
-        // Save the file
-        File(filePath)
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(excel.encode()!);
-
-        print("Excel file exported to: $filePath");
       } else {
-        print("No directory selected.");
+        print("Storage permission denied.");
       }
-    } else {
-      print("Storage permission denied.");
     }
   }
 }

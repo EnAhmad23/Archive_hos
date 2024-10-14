@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:test_2/Ui/Widget/delete_woring.dart';
+import 'package:test_2/Ui/Widget/show_file_name_dialog.dart';
 import '../../Controllers/users_controller.dart';
 import '../../Ui/Widget/animated_number.dart';
 import '../../Ui/Widget/my_button.dart';
@@ -120,21 +121,35 @@ class MainScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   if (usersController.currentUser!.auths.contains(5))
-                    MyButton(
-                        onPressed: () {
-                          Get.dialog(Woring(
-                            title:
-                                '''يجب أن يكون الملف من نوع إكسل و ان يكون من 4 أعمدة\n رقم الملف ,رقم الهوية , الأسم  , التاريخ بالترتيب''',
-                            operation: 'إستيراد',
-                            onTap: () {
-                              fileController.pickAndReadExcel(
-                                  usersController.currentUser!,
-                                  fileController.catoger);
-                              Get.back();
+                    Row(
+                      children: [
+                        MyButton(
+                            onPressed: () {
+                              Get.dialog(FileNameDialog(
+                                  onTap:
+                                      fileController.exportFileTableToExcel));
                             },
-                          ));
-                        },
-                        text: 'استيراد ملف')
+                            text: 'تصدير ملف'),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        MyButton(
+                            onPressed: () {
+                              Get.dialog(Woring(
+                                title:
+                                    '''يجب أن يكون الملف من نوع إكسل و ان يكون من 4 أعمدة\n رقم الملف ,رقم الهوية , الأسم  , التاريخ بالترتيب''',
+                                operation: 'إستيراد',
+                                onTap: () {
+                                  fileController.pickAndReadExcel(
+                                      usersController.currentUser!,
+                                      fileController.catoger);
+                                  Get.back();
+                                },
+                              ));
+                            },
+                            text: 'استيراد ملف'),
+                      ],
+                    )
                 ],
               ),
             ),
