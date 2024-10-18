@@ -138,20 +138,21 @@ class UpdateFileDialog extends StatelessWidget {
                           fileController.patientName =
                               fileController.patientNameController.text;
                           log(fileController.patientName);
-                          log(' catoger -> ${fileController.catoger}');
+                          log(' key -> ${fileController.patientKey}');
 
                           // fileController.catoger =
                           //     fileController.catogerController.text;
                           var y = await patientController.updatePatient(Patient(
-                            id: int.parse(
-                                fileController.patientIdController.text),
-                            name: fileController.patientNameController.text,
-                          ));
+                              id: int.parse(
+                                  fileController.patientIdController.text),
+                              name: fileController.patientNameController.text,
+                              key: fileController.patientKey));
                           log('y -> $y');
                           log('id -> ${fileController.idController.text}');
                           var x = await fileController.updateFile(
                               AppFile(
                                 id: oldId,
+                                patientKey: fileController.patientKey ?? 0,
                                 patientId: int.tryParse(fileController
                                         .patientIdController.text) ??
                                     0,

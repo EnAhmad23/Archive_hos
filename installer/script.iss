@@ -61,7 +61,7 @@ Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\flutter_windows.d
 Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\test_2.exp"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\test_2.lib"; DestDir: "{app}"; Flags: ignoreversion
-
+Source: "D:\flutterApp\test_2\build\windows\x64\runner\Release\permission_handler_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

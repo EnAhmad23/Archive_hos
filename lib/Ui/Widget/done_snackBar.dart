@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomSnackBar extends StatelessWidget {
+class CustomSnackBar extends GetSnackBar {
   final String message;
 
   const CustomSnackBar({

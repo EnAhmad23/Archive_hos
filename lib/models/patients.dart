@@ -1,8 +1,9 @@
 class Patient {
   int? id;
   String name;
+  int? key;
 
-  Patient({required this.id, required this.name});
+  Patient({required this.id, required this.name, this.key});
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       'name': name,
@@ -14,9 +15,6 @@ class Patient {
   }
 
   factory Patient.fromMap(Map<String, dynamic> map) {
-    return Patient(
-      id: map['id'],
-      name: map['name'],
-    );
+    return Patient(id: map['id'], name: map['name'], key: map['key']);
   }
 }

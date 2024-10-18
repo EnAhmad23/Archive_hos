@@ -89,21 +89,25 @@ class DbModel {
   _onCreate(Database database, int version) async {
     await database.execute('''
       CREATE TABLE Patients (
-        id INTEGER NOT NULL PRIMARY KEY,
+        key INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+         id INTEGER UNIQUE,
         name TEXT NOT NULL
       );
       CREATE TABLE users(
+      
        id INTEGER PRIMARY KEY,
        name TEXT , password TEXT ,authat text
        );
       CREATE TABLE file (
-        id INTEGER NOT NULL PRIMARY KEY,
-        Patient_id INTEGER NOT NULL,
+      key INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+        id INTEGER NOT NULL ,
+        Patient_key INTEGER NOT NULL,
         Patient_name TEXT,
         Category TEXT CHECK(Category IN ( 'شهداء', 'جرحى', 'نساء', 'أطفال', 'أورام','جراحات','إعتداء','وفيات')),
         date DATE,
         userId INTEGER,
-        FOREIGN KEY (Patient_id) REFERENCES Patients(id),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP ,
+        FOREIGN KEY (Patient_key) REFERENCES Patients(key),
          FOREIGN KEY (userId) REFERENCES users(id)
       );
     ''');
@@ -140,19 +144,33 @@ class DbModel {
   Future<int> updatePatient(Patient patient) async {
     Database? database = await db;
     int re = await database!
-        .rawInsert('''update  Patients set  id=?,name=?  where id =?
-     ''', [patient.id, patient.name, patient.id]);
+        .rawInsert('''update  Patients set  id=?,name=?  where key =?
+     ''', [patient.id, patient.name, patient.key]);
     return re;
   }
 
   Future<int> addFile(AppFile file, User user) async {
     Database? database = await db;
+    String currentMonth = DateFormat('yyyy-MM').format(file.date);
+    int key = await getPatientKey(file.patientId);
+    // Query to get the max 'id' for the current month
+    final result = await database?.rawQuery('''
+    SELECT MAX(id) as maxId FROM file 
+    WHERE strftime('%Y-%m', date) = ?
+  ''', [currentMonth]);
+
+    int newId = 1; // Default start at 1
+    if (result != null && result.isNotEmpty && result.first['maxId'] != null) {
+      // Increment the maxId for the current month
+      newId = (int.parse('${result.first['maxId']}')) + 1;
+    }
+
     int re = await database!.rawInsert(
-        '''insert into file (id,Patient_id,Patient_name,Category,date,userId) values (?,?,?,?,?,?)
+        '''insert into file (id,Patient_key,Patient_name,Category,date,userId) values (?,?,?,?,?,?)
      ''',
         [
-          file.id,
-          file.patientId,
+          newId,
+          key,
           file.patientName,
           file.category,
           DateFormat('yyyy-MM-dd').format(file.date),
@@ -213,13 +231,16 @@ class DbModel {
     List<Map<String, Object?>> re = await database!.rawQuery('''
     SELECT file.id, 
            users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id
-    LIMIT 10
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+    order By created_at DESC
+   
   ''');
 
     return re;
@@ -229,13 +250,18 @@ class DbModel {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
            users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
            file.date
+          ,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id
-    where Category = 'شهداء' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+     
+    where Category = 'شهداء'
+    order By created_at DESC ''');
 
     return re;
   }
@@ -244,13 +270,17 @@ class DbModel {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
            users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id
-    where Category = 'شهداء' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+     
+    where Category = 'شهداء'
+    order By created_at DESC ''');
 
     return re;
   }
@@ -258,14 +288,18 @@ class DbModel {
   Future<List<Map<String, Object?>>> getAssaultFiles() async {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
-           users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+          users.name AS userName, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id
-    where Category = 'إعتداء' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+    
+    where Category = 'إعتداء'
+     order By created_at DESC ''');
 
     return re;
   }
@@ -273,14 +307,18 @@ class DbModel {
   Future<List<Map<String, Object?>>> getNDaedFiles() async {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
-           users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+          users.name AS userName, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id
-    where Category = 'وفيات' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+    where Category = 'وفيات'
+     order By created_at DESC
+      ''');
 
     return re;
   }
@@ -288,14 +326,18 @@ class DbModel {
   Future<List<Map<String, Object?>>> getKidsFiles() async {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
-            users.name AS userName,  
-           file.Patient_id AS Patient_id, 
+          users.name AS userName, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id
-    where Category = 'أطفال' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+    where Category = 'أطفال'
+     order By created_at DESC
+      ''');
 
     return re;
   }
@@ -303,13 +345,18 @@ class DbModel {
   Future<List<Map<String, Object?>>> getWomanFiles() async {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
-            users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+           users.name AS userName, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-   JOIN users ON file.userId = users.id where Category = 'نساء' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key 
+    where Category = 'نساء'
+     order By created_at DESC
+      ''');
 
     return re;
   }
@@ -318,13 +365,18 @@ class DbModel {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''
 SELECT file.id, 
-           users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+          users.name AS userName, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id where Category = 'جرحى' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key 
+    where Category = 'جرحى'
+     order By created_at DESC
+      ''');
 
     return re;
   }
@@ -333,12 +385,17 @@ SELECT file.id,
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT file.id, 
             users.name AS userName, 
-           file.Patient_id AS Patient_id, 
+           Patients.id AS Patient_id, 
            file.Patient_name AS Patient_name, 
            file.Category AS Category, 
-           file.date
+           file.date,
+           file.created_at,
+           file.Patient_key
     FROM file
-    JOIN users ON file.userId = users.id where Category = 'أورام' ''');
+    JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key 
+    where Category = 'أورام'
+     order By created_at DESC
+      ''');
 
     return re;
   }
@@ -423,6 +480,14 @@ SELECT file.id,
     return re;
   }
 
+  Future<int> getPatientKey(int id) async {
+    Database? database = await db;
+    List<Map<String, Object?>> re = await database!
+        .rawQuery('''SELECT key FROM Patients where id = ? ''', [id]);
+
+    return re.isNotEmpty ? re.first.values.first as int : 0;
+  }
+
   Future<List<Map<String, Object?>>> getNumCategory() async {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''SELECT 
@@ -481,15 +546,15 @@ GROUP BY
     Database? database = await db;
     log('file data base $file');
     log('new id $newId');
+
     int re = await database!.rawUpdate('''UPDATE file SET 
          id=?, 
-         Patient_id=?, 
+       
          Patient_name=?, 
          Category=?, 
          date=? 
        WHERE id = ?''', [
       newId, // New ID to set
-      file.patientId,
       file.patientName,
       file.category,
       DateFormat('yyyy-MM-dd').format(file.date),

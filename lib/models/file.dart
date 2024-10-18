@@ -1,16 +1,19 @@
 import 'package:intl/intl.dart';
 
 class AppFile {
-  final int id;
+  final int? id;
   final String userName;
   final int patientId;
+  final int? patientKey;
+
   final String patientName;
   final String category;
   final DateTime date;
 
   AppFile({
+    this.patientKey,
     required this.userName,
-    required this.id,
+    this.id,
     required this.patientId,
     required this.patientName,
     required this.category,
@@ -22,6 +25,7 @@ class AppFile {
     return {
       'id': id,
       'Patient_id': patientId,
+      'Patient_key': patientKey,
       'Patient_name': patientName,
       'Category': category,
       'date': date,
@@ -37,6 +41,7 @@ class AppFile {
       category: map['Category'],
       date: DateTime.parse(map['date'].toString()),
       userName: map['userName'],
+      patientKey: map['Patient_key'],
     );
   }
   String? get formattedDate {

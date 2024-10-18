@@ -125,9 +125,7 @@ class MainScreen extends StatelessWidget {
                       children: [
                         MyButton(
                             onPressed: () {
-                              Get.dialog(FileNameDialog(
-                                  onTap:
-                                      fileController.exportFileTableToExcel));
+                              Get.dialog(const FileNameDialog());
                             },
                             text: 'تصدير ملف'),
                         SizedBox(
@@ -165,6 +163,9 @@ class MainScreen extends StatelessWidget {
                   GetBuilder<FileController>(builder: (context) {
                     return FileTable(
                       files: fileController.files ?? [],
+                      // fileController.files != null
+                      //     ? fileController.files!.take(10).toList()
+                      //     : [],
                       index: 1,
                     );
                   })

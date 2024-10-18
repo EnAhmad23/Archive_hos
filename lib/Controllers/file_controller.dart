@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:sqflite/sqflite.dart';
 import '../../Controllers/patients_controller.dart';
@@ -13,6 +16,7 @@ import '../../models/database_model.dart';
 import '../../models/file.dart';
 import '../../models/patients.dart';
 import '../../models/user.dart';
+import '../Ui/Widget/done_snackBar.dart';
 // import 'package:file_picker/file_picker.dart';
 
 class FileController extends GetxController {
@@ -33,6 +37,7 @@ class FileController extends GetxController {
   int? _numOfInjured;
   int? _numOfWoman;
   int? _numOfCancer;
+  int? patientKey;
   int? _numOfSurgery;
   int? _numOfAssault;
   int? _numOfNDead;
@@ -449,6 +454,7 @@ class FileController extends GetxController {
     patientNameController.text = file.patientName;
     catoger = file.category;
     date = file.date;
+    patientKey = file.patientKey;
   }
 
   clearTextFiled() {
@@ -519,60 +525,103 @@ class FileController extends GetxController {
     filterItems('', womans);
   }
 
-  Future<void> exportFileTableToExcel() async {
+  Future<void> exportFileTableToExcel(String fileName) async {
     DbModel dbModel = DbModel();
     await dbModel.initDataBase();
 
     // Check for storage permission
-    if (fromKey.currentState!.validate()) {
-      if (await Permission.storage.request().isGranted) {
-        // Let the user pick a directory where the file will be saved
-        String? selectedDirectory =
-            await FilePicker.platform.getDirectoryPath();
 
-        if (selectedDirectory != null) {
-          var excel = Excel.createExcel();
-          String sheetName = "Files";
+    if (await Permission.storage.request().isGranted) {
+      // Let the user pick a directory where the file will be saved
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
-          // Create or access the sheet
-          Sheet sheetObject = excel[sheetName];
+      if (selectedDirectory != null) {
+        var excel = Excel.createExcel();
 
-          // Add headers
-          sheetObject.appendRow([
-            TextCellValue('التاريخ'),
-            TextCellValue('الفئة'),
-            TextCellValue('الأسم'),
-            TextCellValue('رقم الهوية'),
-            TextCellValue('رقم الملف'),
-          ]);
+        String sheetName = "Sheet1";
 
+        // Create or access the sheet
+        Sheet sheetObject = excel[sheetName];
+        sheetObject.isRTL = true;
+        // Add headers
+        sheetObject.appendRow([
+          TextCellValue('رقم الملف'),
+          TextCellValue('رقم الهوية'),
+          TextCellValue('الأسم'),
+          TextCellValue('الفئة'),
+          TextCellValue('التاريخ'),
+        ]);
+        await getFiles();
+        // Ensure files is not null before proceeding
+        if (files != null) {
           // Add data rows from the file table
           for (var row in files!) {
             sheetObject.appendRow([
-              TextCellValue('${row.date}'),
-              TextCellValue(row.category),
+              IntCellValue(int.parse('${row.id}')),
+              IntCellValue(int.parse('${row.patientId}')),
               TextCellValue(row.patientName),
-              TextCellValue('${row.patientId}'),
-              TextCellValue('${row.id}'),
+              TextCellValue(row.category),
+              TextCellValue(DateFormat('yyyy-MM-dd').format(row.date)),
             ]);
           }
 
-          // Save the file in the selected directory
-          String filePath =
-              '$selectedDirectory/${fileNameController.text}.xlsx';
+          if (fileNameController.text.isNotEmpty) {
+            // Save the file in the selected directory
+            String filePath = '$selectedDirectory/$fileName.xlsx';
 
-          // Save the file
-          File(filePath)
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(excel.encode()!);
+            // Save the file
+            File(filePath)
+              ..createSync(recursive: true)
+              ..writeAsBytesSync(excel.encode()!);
 
-          print("$filePath  تم تصدير ملف الاكسل الى : ");
+            Get.showSnackbar(
+              GetSnackBar(
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+                titleText: Text(
+                  'تم',
+                  style:
+                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                ),
+                messageText: Text(
+                  "$filePath  تم تصدير ملف الاكسل الى : ",
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+                maxWidth: 800.w,
+                // title: 'Success',
+                // message: 'File update successfully!',
+                icon: Lottie.asset(
+                  'assets/json/check.json',
+                ),
+                backgroundColor: Colors.white,
+                snackPosition: SnackPosition.BOTTOM,
+                borderRadius: 10,
+                margin: const EdgeInsets.all(16),
+                duration: const Duration(seconds: 3),
+                isDismissible: true,
+                dismissDirection: DismissDirection.horizontal,
+                mainButton: TextButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text(
+                    'إغلاق',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+            );
+            print("$filePath  تم تصدير ملف الاكسل الى : ");
+          } else {
+            print("File name is empty.");
+          }
         } else {
-          print("No directory selected.");
+          print("No files data available to export.");
         }
       } else {
-        print("Storage permission denied.");
+        print("No directory selected.");
       }
+    } else {
+      print("Storage permission denied.");
     }
   }
 }

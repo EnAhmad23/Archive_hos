@@ -45,17 +45,17 @@ class AddFileDialog extends StatelessWidget {
                   'انشاء ملف جديد',
                   style: TextStyle(fontSize: 24.sp),
                 ),
-                SizedBox(height: 20.h),
-                MyTextFormField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  validator: fileController.fileIdValidet,
-                  labelText: 'رقم الملف',
-                  hintText: 'أدخل رقم الملف',
-                  controller: fileController.idController,
-                ),
+                // SizedBox(height: 20.h),
+                // MyTextFormField(
+                //   keyboardType: TextInputType.number,
+                //   inputFormatters: [
+                //     FilteringTextInputFormatter.digitsOnly,
+                //   ],
+                //   validator: fileController.fileIdValidet,
+                //   labelText: 'رقم الملف',
+                //   hintText: 'أدخل رقم الملف',
+                //   controller: fileController.idController,
+                // ),
                 SizedBox(height: 20.h),
                 MyTextFormField(
                   keyboardType: TextInputType.number,
@@ -119,7 +119,7 @@ class AddFileDialog extends StatelessWidget {
                         if (fileController.fromKey.currentState!.validate()) {
                           fileController.id =
                               int.tryParse(fileController.idController.text);
-                          fileController.patientID = int.tryParse(
+                          fileController.patientID = int.parse(
                               fileController.patientIdController.text);
                           fileController.patientName =
                               fileController.patientNameController.text;
@@ -131,7 +131,6 @@ class AddFileDialog extends StatelessWidget {
                           ));
                           var x = await fileController.addFile(
                               AppFile(
-                                id: fileController.id,
                                 patientId: fileController.patientID,
                                 category: fileController.catoger!,
                                 date: fileController.date!,
