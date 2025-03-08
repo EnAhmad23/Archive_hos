@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../Controllers/file_controller.dart';
 import '../Widget/add_file.dart';
+import '../Widget/add_file_button.dart';
 import '../Widget/file_table.dart';
 import '../Widget/my_button.dart';
 
@@ -72,20 +73,7 @@ class AssaultScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: MyButton(
-                  onPressed: () {
-                    fileController.catoger = fileController.catogers[7];
-                    Get.dialog(AddFileDialog(
-                      fileController: fileController,
-                      index: 7,
-                    ));
-                  },
-                  text: 'انشاء ملف',
-                  icon: Icons.insert_drive_file,
-                ),
-              )
+              AddFileButton(index: 7, fileController: fileController)
             ],
           ),
           SizedBox(height: 20.h),

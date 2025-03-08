@@ -174,6 +174,7 @@ class AddFileDialog extends StatelessWidget {
                               break;
                           }
                           await fileController.getFiles();
+
                           Get.back();
                           if (x != 0) {
                             Get.showSnackbar(

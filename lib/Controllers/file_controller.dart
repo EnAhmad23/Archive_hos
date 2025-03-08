@@ -27,6 +27,9 @@ class FileController extends GetxController {
     'أطفال',
     'نساء',
     'أورام',
+    'جراحات',
+    'إعتداءات',
+    'وفيات',
     'اختر الفئة'
   ];
   GlobalKey<FormState> fromKey = GlobalKey();

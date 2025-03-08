@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:test_2/Ui/Widget/add_file_button.dart';
 
 import '../../Controllers/file_controller.dart';
 import '../Widget/add_file.dart';
@@ -71,20 +72,7 @@ class DeadScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: MyButton(
-                  onPressed: () {
-                    fileController.catoger = fileController.catogers[0];
-                    Get.dialog(AddFileDialog(
-                      fileController: fileController,
-                      index: 0,
-                    ));
-                  },
-                  text: 'انشاء ملف',
-                  icon: Icons.insert_drive_file,
-                ),
-              )
+              AddFileButton(index: 0, fileController: fileController)
             ],
           ),
           SizedBox(height: 20.h),
