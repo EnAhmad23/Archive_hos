@@ -26,6 +26,7 @@ class UsersController extends GetxController {
   bool kids = false;
   bool woman = false;
   bool cancer = false;
+  bool statistics = false;
   bool surgery = false;
   bool assault = false;
   bool nDead = false;
@@ -86,6 +87,11 @@ class UsersController extends GetxController {
 
   changSurgery(bool value) {
     surgery = value;
+    update();
+  }
+
+  changStatistics(bool value) {
+    statistics = value;
     update();
   }
 
@@ -233,6 +239,9 @@ class UsersController extends GetxController {
     if (nDead) {
       authList.add(8);
     }
+    if (statistics) {
+      authList.add(9);
+    }
   }
 
   addUpdateAuth() {
@@ -260,6 +269,9 @@ class UsersController extends GetxController {
     if (nDead) {
       updateAuth.add(8);
     }
+    if (statistics) {
+      authList.add(9);
+    }
   }
 
   initData(User user) {
@@ -286,6 +298,9 @@ class UsersController extends GetxController {
     }
     if (user.auths.contains(8)) {
       changNDead(true);
+    }
+    if (user.auths.contains(9)) {
+      changStatistics(true);
     }
   }
 

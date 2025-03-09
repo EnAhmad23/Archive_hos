@@ -24,7 +24,7 @@ class UpdateUser extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 30.h),
         child: Container(
-          width: 720.w,
+          width: 800.w,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -100,6 +100,13 @@ class UpdateUser extends StatelessWidget {
                         value: usersController.nDead,
                         onChanged: (bool? value) {
                           usersController.changNDead(value ?? false);
+                        },
+                      ),
+                      Mycheckbox(
+                        label: 'الإحصائيات',
+                        value: usersController.statistics,
+                        onChanged: (bool? value) {
+                          usersController.changStatistics(value ?? false);
                         },
                       ),
                     ],

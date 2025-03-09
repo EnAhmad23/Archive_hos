@@ -88,7 +88,7 @@ class WomanScreen extends StatelessWidget {
                   ],
                 );
               }
-              return Container(
+              return SizedBox(
                   width: double.infinity,
                   child: FileTable(files: fileController.filteredItems));
             }),

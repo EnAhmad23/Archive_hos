@@ -58,6 +58,9 @@ class User {
     if (auths.contains(8)) {
       stringAuth.add('وفيات');
     }
+    if (auths.contains(9)) {
+      stringAuth.add('إحصائيات');
+    }
     String x = stringAuth.join(',');
     stringAuth.clear();
 

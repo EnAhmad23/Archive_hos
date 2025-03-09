@@ -445,7 +445,8 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (usersController.currentUser!.auths.contains(5))
+                      if (usersController.currentUser!.auths.contains(5) ||
+                          usersController.currentUser!.auths.contains(9))
                         SideMenuItemDataTile(
                           margin:
                               const EdgeInsetsDirectional.fromSTEB(4, 20, 4, 0),

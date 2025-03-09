@@ -98,7 +98,7 @@ class UserScreen extends StatelessWidget {
                   ],
                 );
               }
-              return Container(
+              return SizedBox(
                   width: double.infinity,
                   child: UsersTable(users: usersController.filteredItems));
             }),
