@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:test_2/Ui/Widget/add_file_button.dart';
 
 import '../../Controllers/file_controller.dart';
-import '../Widget/add_file.dart';
 import '../Widget/file_table.dart';
-import '../Widget/my_button.dart';
 
 class DeadScreen extends StatelessWidget {
   const DeadScreen({super.key});
@@ -87,7 +85,7 @@ class DeadScreen extends StatelessWidget {
                   ],
                 );
               }
-              return Container(
+              return SizedBox(
                   width: double.infinity,
                   child: FileTable(files: fileController.filteredItems));
             }),

@@ -35,7 +35,7 @@ void main() async {
           id: 900223678,
           name: 'أبو راشد',
           password: '900223678',
-          auths: [0, 1, 2, 3, 4, 5, 6, 7, 8]));
+          auths: [0, 1, 2, 3, 4, 6, 7, 8, 9]));
     }
     var adminCheck = await loginController.checkUserIn('1000');
     if (!adminCheck) {

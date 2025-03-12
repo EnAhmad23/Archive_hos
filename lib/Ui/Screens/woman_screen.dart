@@ -3,10 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../Controllers/file_controller.dart';
-import '../Widget/add_file.dart';
 import '../Widget/add_file_button.dart';
 import '../Widget/file_table.dart';
-import '../Widget/my_button.dart';
 
 class WomanScreen extends StatelessWidget {
   const WomanScreen({super.key});

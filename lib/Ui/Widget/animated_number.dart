@@ -6,10 +6,10 @@ class AnimatedNumber extends StatelessWidget {
   final Duration duration;
 
   const AnimatedNumber({
-    Key? key,
+    super.key,
     required this.targetNumber,
     this.duration = const Duration(milliseconds: 500),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

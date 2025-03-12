@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import '../../Controllers/users_controller.dart';
 import '../../Ui/Widget/myTextFormField.dart';
-import '../../models/user.dart';
 import '../../Controllers/file_controller.dart';
 import '../../Controllers/patients_controller.dart';
 
@@ -31,7 +30,7 @@ class AddFileDialog extends StatelessWidget {
     return Dialog(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 30.h),
-        child: Container(
+        child: SizedBox(
           width: 720.w,
           child: Form(
             key: fileController.fromKey,

@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
     final LoginController loginController = Get.find<LoginController>();
     final UsersController usersController = Get.find<UsersController>();
 
-    void _loginAction() async {
+    void loginAction() async {
       if (loginController.form.currentState!.validate()) {
         if (loginController.checkUser(loginController.idController.text,
             loginController.passwordController.text)) {
@@ -51,7 +51,7 @@ class LoginScreen extends StatelessWidget {
         onKey: (RawKeyEvent event) {
           if (event is RawKeyDownEvent &&
               event.logicalKey == LogicalKeyboardKey.enter) {
-            _loginAction(); // Trigger the login action when Enter is pressed
+            loginAction(); // Trigger the login action when Enter is pressed
           }
         },
         child: Center(
@@ -109,7 +109,7 @@ class LoginScreen extends StatelessWidget {
                             height: 50,
                           ),
                           ElevatedButton(
-                            onPressed: _loginAction, // Attach the login action
+                            onPressed: loginAction, // Attach the login action
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),

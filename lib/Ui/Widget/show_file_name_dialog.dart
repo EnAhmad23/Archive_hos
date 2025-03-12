@@ -26,6 +26,7 @@ class FileNameDialog extends StatelessWidget {
                 if (value == null || value.trim().isEmpty) {
                   return 'الرجاء ادخال اسم الملف';
                 }
+                return null;
               },
               controller: fileController.fileNameController,
               labelText: 'اسم الملف',

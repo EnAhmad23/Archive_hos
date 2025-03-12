@@ -35,7 +35,7 @@ class UpdateFileDialog extends StatelessWidget {
     return Dialog(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 30.h),
-        child: Container(
+        child: SizedBox(
           width: 720.w,
           child: Form(
             key: fileController.fromKey,

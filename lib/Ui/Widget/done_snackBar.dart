@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomSnackBar extends GetSnackBar {
+  @override
   final String message;
 
   const CustomSnackBar({

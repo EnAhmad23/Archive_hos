@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../../models/file.dart';
 import '../../models/patients.dart';
@@ -194,7 +193,7 @@ class DbModel {
     }
 
     // Perform the query on the available database
-    return await database!.rawQuery('''SELECT * FROM users ''');
+    return await database.rawQuery('''SELECT * FROM users ''');
   }
 
   Future<List<Map<String, Object?>>> getUser(int id) async {
@@ -209,7 +208,7 @@ class DbModel {
     Database? database = await db;
     if (database != null) {
       List<Map<String, Object?>> re =
-          await database!.rawQuery('''SELECT id FROM users ''');
+          await database.rawQuery('''SELECT id FROM users ''');
       return re;
     }
 

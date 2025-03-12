@@ -23,7 +23,7 @@ class AddUserDialog extends StatelessWidget {
     return Dialog(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 30.h),
-        child: Container(
+        child: SizedBox(
           width: 800.w,
           child: Form(
             key: usersController.fromKey,

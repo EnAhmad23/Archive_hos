@@ -5,8 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -16,7 +14,6 @@ import '../../models/database_model.dart';
 import '../../models/file.dart';
 import '../../models/patients.dart';
 import '../../models/user.dart';
-import '../Ui/Widget/done_snackBar.dart';
 // import 'package:file_picker/file_picker.dart';
 
 class FileController extends GetxController {
@@ -538,90 +535,85 @@ class FileController extends GetxController {
       // Let the user pick a directory where the file will be saved
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
-      if (selectedDirectory != null) {
-        var excel = Excel.createExcel();
+      var excel = Excel.createExcel();
 
-        String sheetName = "Sheet1";
+      String sheetName = "Sheet1";
 
-        // Create or access the sheet
-        Sheet sheetObject = excel[sheetName];
-        sheetObject.isRTL = true;
-        // Add headers
-        sheetObject.appendRow([
-          TextCellValue('رقم الملف'),
-          TextCellValue('رقم الهوية'),
-          TextCellValue('الأسم'),
-          TextCellValue('الفئة'),
-          TextCellValue('التاريخ'),
-        ]);
-        await getFiles();
-        // Ensure files is not null before proceeding
-        if (files != null) {
-          // Add data rows from the file table
-          for (var row in files!) {
-            sheetObject.appendRow([
-              IntCellValue(int.parse('${row.id}')),
-              IntCellValue(int.parse('${row.patientId}')),
-              TextCellValue(row.patientName),
-              TextCellValue(row.category),
-              TextCellValue(DateFormat('yyyy-MM-dd').format(row.date)),
-            ]);
-          }
+      // Create or access the sheet
+      Sheet sheetObject = excel[sheetName];
+      sheetObject.isRTL = true;
+      // Add headers
+      sheetObject.appendRow([
+        TextCellValue('رقم الملف'),
+        TextCellValue('رقم الهوية'),
+        TextCellValue('الأسم'),
+        TextCellValue('الفئة'),
+        TextCellValue('التاريخ'),
+      ]);
+      await getFiles();
+      // Ensure files is not null before proceeding
+      if (files != null) {
+        // Add data rows from the file table
+        for (var row in files!) {
+          sheetObject.appendRow([
+            IntCellValue(int.parse('${row.id}')),
+            IntCellValue(int.parse('${row.patientId}')),
+            TextCellValue(row.patientName),
+            TextCellValue(row.category),
+            TextCellValue(DateFormat('yyyy-MM-dd').format(row.date)),
+          ]);
+        }
 
-          if (fileNameController.text.isNotEmpty) {
-            // Save the file in the selected directory
-            String filePath = '$selectedDirectory/$fileName.xlsx';
+        if (fileNameController.text.isNotEmpty) {
+          // Save the file in the selected directory
+          String filePath = '$selectedDirectory/$fileName.xlsx';
 
-            // Save the file
-            File(filePath)
-              ..createSync(recursive: true)
-              ..writeAsBytesSync(excel.encode()!);
+          // Save the file
+          File(filePath)
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(excel.encode()!);
 
-            Get.showSnackbar(
-              GetSnackBar(
-                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
-                titleText: Text(
-                  'تم',
-                  style:
-                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-                ),
-                messageText: Text(
-                  "$filePath  تم تصدير ملف الاكسل الى : ",
-                  style: TextStyle(fontSize: 20.sp),
-                ),
-                maxWidth: 800.w,
-                // title: 'Success',
-                // message: 'File update successfully!',
-                icon: Lottie.asset(
-                  'assets/json/check.json',
-                ),
-                backgroundColor: Colors.white,
-                snackPosition: SnackPosition.BOTTOM,
-                borderRadius: 10,
-                margin: const EdgeInsets.all(16),
-                duration: const Duration(seconds: 3),
-                isDismissible: true,
-                dismissDirection: DismissDirection.horizontal,
-                mainButton: TextButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: const Text(
-                    'إغلاق',
-                    style: TextStyle(color: Colors.black),
-                  ),
+          Get.showSnackbar(
+            GetSnackBar(
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+              titleText: Text(
+                'تم',
+                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+              ),
+              messageText: Text(
+                "$filePath  تم تصدير ملف الاكسل الى : ",
+                style: TextStyle(fontSize: 20.sp),
+              ),
+              maxWidth: 800.w,
+              // title: 'Success',
+              // message: 'File update successfully!',
+              icon: Lottie.asset(
+                'assets/json/check.json',
+              ),
+              backgroundColor: Colors.white,
+              snackPosition: SnackPosition.BOTTOM,
+              borderRadius: 10,
+              margin: const EdgeInsets.all(16),
+              duration: const Duration(seconds: 3),
+              isDismissible: true,
+              dismissDirection: DismissDirection.horizontal,
+              mainButton: TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text(
+                  'إغلاق',
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
-            );
-            print("$filePath  تم تصدير ملف الاكسل الى : ");
-          } else {
-            print("File name is empty.");
-          }
+            ),
+          );
+          print("$filePath  تم تصدير ملف الاكسل الى : ");
         } else {
-          print("No files data available to export.");
+          print("File name is empty.");
         }
       } else {
-        print("No directory selected.");
+        print("No files data available to export.");
       }
     } else {
       print("Storage permission denied.");

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:test_2/Ui/Widget/add_file.dart';
 import 'package:test_2/Ui/Widget/my_button.dart';
-import '../../Consts/consts.dart';
 import '../../Controllers/file_controller.dart';
 
 class AddFileButton extends StatelessWidget {

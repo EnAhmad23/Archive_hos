@@ -71,7 +71,8 @@ class FileTable extends StatelessWidget {
                   const DataColumn(label: Text('الأسم')),
                   const DataColumn(label: Text('الفئة')),
                   DataColumn(
-                      label: SizedBox(width: 100.w, child: Text('اسم المدخل'))),
+                      label: SizedBox(
+                          width: 100.w, child: const Text('اسم المدخل'))),
                   DataColumn(
                       label:
                           SizedBox(width: 100.w, child: const Text('التاريخ'))),
