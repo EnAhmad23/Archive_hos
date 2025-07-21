@@ -57,9 +57,9 @@ class StatisticsScreen extends StatelessWidget {
                     width: 1200.w,
                     height: 400.h,
                     child: BarChart(
-                      swapAnimationDuration: const Duration(
+                      duration: const Duration(
                           milliseconds: 500), // Animation duration
-                      swapAnimationCurve: Curves.easeInOut, // Animation curve
+                      curve: Curves.easeInOut, // Animation curve
                       BarChartData(
                         barTouchData: BarTouchData(
                             touchTooltipData: BarTouchTooltipData(
