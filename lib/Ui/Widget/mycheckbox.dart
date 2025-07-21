@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Mycheckbox extends StatelessWidget {
-  const Mycheckbox({
+class MyCheckbox extends StatelessWidget {
+  const MyCheckbox({
     super.key,
     required this.label,
     required this.value,
@@ -18,7 +19,7 @@ class Mycheckbox extends StatelessWidget {
           value: value,
           onChanged: onChanged,
         ),
-        Text(label),
+        Text(label,style: TextStyle(fontSize: 14.sp),),
       ],
     );
   }

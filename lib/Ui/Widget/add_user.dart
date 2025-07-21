@@ -78,63 +78,63 @@ class AddUserDialog extends StatelessWidget {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'شهداء',
                           value: usersController.dead,
                           onChanged: (bool? value) {
                             usersController.changDead(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'جرحى',
                           value: usersController.injured,
                           onChanged: (bool? value) {
                             usersController.changInjured(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'أطفال',
                           value: usersController.kids,
                           onChanged: (bool? value) {
                             usersController.changKids(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'نساء',
                           value: usersController.woman,
                           onChanged: (bool? value) {
                             usersController.changWoman(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'أورام',
                           value: usersController.cancer,
                           onChanged: (bool? value) {
                             usersController.changCancer(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'جراحات',
                           value: usersController.surgery,
                           onChanged: (bool? value) {
                             usersController.changSurgery(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'إعتداء',
                           value: usersController.assault,
                           onChanged: (bool? value) {
                             usersController.changAssault(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'وفيات',
                           value: usersController.nDead,
                           onChanged: (bool? value) {
                             usersController.changNDead(value ?? false);
                           },
                         ),
-                        Mycheckbox(
+                        MyCheckbox(
                           label: 'الإحصائيات',
                           value: usersController.statistics,
                           onChanged: (bool? value) {
