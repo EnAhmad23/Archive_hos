@@ -1,16 +1,13 @@
-# test_2
+# Archive
 
-A new Flutter project.
+A Flutter application developed for Kamal Adwan Hospital during the wartime crisis in Gaza. The system helps the archiving department categorize incoming patient cases, filter by type and urgency, and generate statistical insights to support medical decision-making and reporting.
 
-## Getting Started
+## 📱 Overview
 
-This project is a starting point for a Flutter application.
+During emergency conditions, fast and organized data management can save lives. This app was designed to:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Digitize patient case registration
+- Classify cases by type (e.g., trauma, chronic, pediatric)
+- Sort by urgency or arrival time
+- Generate live case statistics and charts
+- Support Arabic-language interface for hospital staff
