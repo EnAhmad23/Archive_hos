@@ -44,7 +44,11 @@ class KidsScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(value, fileController.kids);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'أطفال',
+                          openList: fileController.kids,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -53,8 +57,11 @@ class KidsScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      '', fileController.kids);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'أطفال',
+                                    openList: fileController.kids,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )

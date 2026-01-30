@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
+import 'package:test_2/Ui/Screens/home_screen.dart';
 import 'package:test_2/Ui/Widget/show_file_name_dialog.dart';
 import '../../Controllers/users_controller.dart';
 import '../../Ui/Widget/animated_number.dart';
@@ -145,6 +147,191 @@ class MainScreen extends StatelessWidget {
                               ));
                             },
                             text: 'استيراد ملف'),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        MyButton(
+                            onPressed: () {
+                              String? selectedMonth;
+                              Get.dialog(
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: AlertDialog(
+                                    title:
+                                        const Center(child: Text('إغلاق شهر')),
+                                    content: SizedBox(
+                                      width: 450.w,
+                                      child: FutureBuilder<List<String>>(
+                                        future: fileController
+                                            .getOpenMonthsWithFiles(),
+                                        builder: (context, snapshot) {
+                                          final months = snapshot.data ?? [];
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const SizedBox(
+                                              height: 80,
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                            );
+                                          }
+
+                                          if (months.isEmpty) {
+                                            return const Text(
+                                              'لا يوجد أشهر مفتوحة لإغلاقها',
+                                              textAlign: TextAlign.center,
+                                            );
+                                          }
+
+                                          selectedMonth ??= months.first;
+                                          return StatefulBuilder(
+                                            builder: (context, setState) {
+                                              return Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  DropdownButtonFormField<
+                                                      String>(
+                                                    value: selectedMonth,
+                                                    items: months
+                                                        .map(
+                                                          (m) =>
+                                                              DropdownMenuItem<
+                                                                  String>(
+                                                            value: m,
+                                                            child: Text(m),
+                                                          ),
+                                                        )
+                                                        .toList(),
+                                                    onChanged: (value) {
+                                                      if (value == null) return;
+                                                      setState(() {
+                                                        selectedMonth = value;
+                                                      });
+                                                    },
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText: 'الشهر',
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 16.h),
+                                                  const Text(
+                                                    'لن تظهر ملفات هذا الشهر في البحث بعد الإغلاق',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    actions: [
+                                      Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            MyButton(
+                                              backgroundColor: Colors.green,
+                                              onPressed: () async {
+                                                if (selectedMonth == null ||
+                                                    selectedMonth!.isEmpty) {
+                                                  Get.back();
+                                                  return;
+                                                }
+                                                Get.dialog(
+                                                  Directionality(
+                                                    textDirection:
+                                                        TextDirection.rtl,
+                                                    child: AlertDialog(
+                                                      title: const Center(
+                                                          child: Text('تأكيد')),
+                                                      content: SizedBox(
+                                                        width: 450.w,
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Lottie.asset(
+                                                              'assets/json/warning.json',
+                                                              height: 120.h,
+                                                            ),
+                                                            SizedBox(
+                                                                height: 10.h),
+                                                            Text(
+                                                              'هل أنت متأكد من إغلاق شهر ${selectedMonth!} ؟',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      18.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: [
+                                                        Center(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              MyButton(
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                onPressed:
+                                                                    () async {
+                                                                  Get.back();
+                                                                  await fileController
+                                                                      .closeMonthAndRefresh(
+                                                                          selectedMonth!);
+                                                                  Get.off(
+                                                                      HomeScreen());
+                                                                },
+                                                                text: 'تأكيد',
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 10.w),
+                                                              MyButton(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .green,
+                                                                onPressed: () {
+                                                                  Get.back();
+                                                                },
+                                                                text: 'إلغاء',
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              text: 'إغلاق',
+                                            ),
+                                            SizedBox(width: 10.w),
+                                            MyButton(
+                                              onPressed: () {
+                                                Get.back();
+                                              },
+                                              text: 'إلغاء',
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            text: 'إغلاق شهر'),
                       ],
                     )
                 ],

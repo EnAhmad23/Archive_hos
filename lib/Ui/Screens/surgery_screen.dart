@@ -44,7 +44,11 @@ class SurgeryScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(value, fileController.nDead);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'جراحات',
+                          openList: fileController.surgery,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -53,8 +57,11 @@ class SurgeryScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      '', fileController.nDead);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'جراحات',
+                                    openList: fileController.surgery,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )

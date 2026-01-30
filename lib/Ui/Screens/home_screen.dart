@@ -135,6 +135,7 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 1;
                             }
                             await fileController.getDeadsFiles();
+                            fileController.searchController.clear();
                             fileController.filterItems(
                                 '', fileController.daeds);
                             log('************* ${fileController.daeds?.length}');
@@ -173,6 +174,7 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 2;
                             }
                             await fileController.getInjuredFiles();
+                            fileController.searchController.clear();
                             fileController.filterItems(
                                 '', fileController.injureds);
                           },
@@ -207,6 +209,7 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 3;
                             }
                             await fileController.getKidsFiles();
+                            fileController.searchController.clear();
                             fileController.filterItems('', fileController.kids);
                           },
                           title: 'الاطفال',
@@ -237,6 +240,7 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 4;
                             }
                             await fileController.getWomansFiles();
+                            fileController.searchController.clear();
                             fileController.filterItems(
                                 '', fileController.womans);
                           },
@@ -274,6 +278,7 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 5;
                             }
                             await fileController.getCancerFiles();
+                            fileController.searchController.clear();
                             fileController.filterItems(
                                 '', fileController.cancers);
                           },
@@ -312,6 +317,9 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 6;
                             }
                             await fileController.getSurgeryFiles();
+                            fileController.searchController.clear();
+                            fileController.filterItems(
+                                '', fileController.surgery);
                           },
                           title: 'الجراحات',
                           borderRadius: const BorderRadius.all(
@@ -348,6 +356,9 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 7;
                             }
                             await fileController.getAssaultFiles();
+                            fileController.searchController.clear();
+                            fileController.filterItems(
+                                '', fileController.assault);
                           },
                           title: 'الإعتداءات',
                           borderRadius: const BorderRadius.all(
@@ -384,6 +395,9 @@ class HomeScreen extends StatelessWidget {
                               homeController.index = 8;
                             }
                             await fileController.getNDeadFiles();
+                            fileController.searchController.clear();
+                            fileController.filterItems(
+                                '', fileController.nDead);
                           },
                           title: 'الوفيات',
                           borderRadius: const BorderRadius.all(

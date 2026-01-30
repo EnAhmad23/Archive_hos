@@ -44,7 +44,11 @@ class NaturalScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(value, fileController.nDead);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'وفيات',
+                          openList: fileController.nDead,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -53,8 +57,11 @@ class NaturalScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      '', fileController.nDead);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'وفيات',
+                                    openList: fileController.nDead,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )

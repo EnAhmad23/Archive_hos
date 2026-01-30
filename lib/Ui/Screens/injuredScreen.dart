@@ -44,8 +44,11 @@ class Injuredscreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(
-                            value, fileController.injureds);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'جرحى',
+                          openList: fileController.injureds,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -54,8 +57,11 @@ class Injuredscreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      '', fileController.injureds);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'جرحى',
+                                    openList: fileController.injureds,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )

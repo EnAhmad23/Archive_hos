@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:test_2/Ui/Widget/done_snackBar.dart';
 // import 'package:sqflite/sqflite.dart';
 import '../../Controllers/patients_controller.dart';
 import '../../models/database_model.dart';
@@ -66,6 +67,109 @@ class FileController extends GetxController {
   TextEditingController catogerController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController searchController = TextEditingController();
+
+  Future<List<String>> getOpenMonthsWithFiles() async {
+    return await _dbModel.getOpenMonthsWithFiles();
+  }
+
+  Future<bool> closeMonthAndRefresh(String month) async {
+    final canClose = await _dbModel.canCloseMonth(month);
+    if (!canClose) {
+      if (!Get.isSnackbarOpen) {
+        Get.showSnackbar(
+          GetSnackBar(
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+            messageText: Text(
+              'لا يمكن إغلاق هذا الشهر قبل إغلاق الشهر السابق',
+              style: TextStyle(fontSize: 18.sp),
+            ),
+            backgroundColor: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+            borderRadius: 10,
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 3),
+            isDismissible: true,
+            dismissDirection: DismissDirection.horizontal,
+            mainButton: TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                'إغلاق',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      }
+      return false;
+    }
+
+    final re = await _dbModel.closeMonth(month);
+    if (re == 0) {
+      return false;
+    }
+
+    await getFiles();
+    await getDeadsFiles();
+    await getInjuredFiles();
+    await getKidsFiles();
+    await getWomansFiles();
+    await getCancerFiles();
+    await getSurgeryFiles();
+    await getAssaultFiles();
+    await getNDeadFiles();
+    await getNumOfDeads();
+    await getNumOfInjured();
+    await getNumOfKids();
+    await getNumOfWoman();
+    await getNumOfCancer();
+    await getNumOfSurgery();
+    await getNumOfAssault();
+    await getNumOfNDead();
+    filterItems('', files);
+
+    if (!Get.isSnackbarOpen) {
+      Get.showSnackbar(
+        GetSnackBar(
+          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+          titleText: Text(
+            'تم',
+            style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+          ),
+          messageText: Text(
+            'تم إغلاق شهر $month بنجاح',
+            style: TextStyle(fontSize: 20.sp),
+          ),
+          maxWidth: 600.w,
+          // title: 'Success',
+          // message: 'File update successfully!',
+          icon: Lottie.asset(
+            'assets/json/check.json',
+          ),
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          borderRadius: 10,
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 3),
+          isDismissible: true,
+          dismissDirection: DismissDirection.horizontal,
+          mainButton: TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text(
+              'إغلاق',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return true;
+  }
+
   Future<void> loadData() async {
     isLoading.value = true;
     // Fetch data
@@ -91,6 +195,21 @@ class FileController extends GetxController {
       );
     }
     log('filteredItems -> ${filteredItems.toString()}');
+  }
+
+  Future<void> searchFilesInCategory(
+    String query, {
+    required String category,
+    required List<AppFile>? openList,
+  }) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      filteredItems.assignAll(openList ?? []);
+      return;
+    }
+
+    final re = await _dbModel.searchFiles(query: trimmed, category: category);
+    filteredItems.assignAll(re.map((e) => AppFile.fromMap(e)).toList());
   }
 
   set id(int? id) {
@@ -436,16 +555,82 @@ class FileController extends GetxController {
   }
 
   Future<int> addFile(AppFile file, User user) async {
-    int x = await _dbModel.addFile(file, user);
-    log('$x');
-    return x;
+    try {
+      int x = await _dbModel.addFile(file, user);
+      log('$x');
+      return x;
+    } catch (e) {
+      if (!Get.isSnackbarOpen) {
+        Get.showSnackbar(
+          GetSnackBar(
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+            messageText: Text(
+              'لا يمكن إضافة ملف في شهر مغلق',
+              style: TextStyle(fontSize: 18.sp),
+            ),
+            maxWidth: 700.w,
+            backgroundColor: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+            borderRadius: 10,
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 3),
+            isDismissible: true,
+            dismissDirection: DismissDirection.horizontal,
+            mainButton: TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                'إغلاق',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      }
+      log('addFile failed: $e');
+      return 0;
+    }
   }
 
   Future<int> updateFile(AppFile file, int newId) async {
-    int x = await _dbModel.updateFile(file, newId);
-    log(file.toString());
-    log('$x');
-    return x;
+    try {
+      int x = await _dbModel.updateFile(file, newId);
+      log(file.toString());
+      log('$x');
+      return x;
+    } catch (e) {
+      if (!Get.isSnackbarOpen) {
+        Get.showSnackbar(
+          GetSnackBar(
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+            messageText: Text(
+              'لا يمكن تعديل ملف في شهر مغلق',
+              style: TextStyle(fontSize: 18.sp),
+            ),
+            maxWidth: 700.w,
+            backgroundColor: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+            borderRadius: 10,
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 3),
+            isDismissible: true,
+            dismissDirection: DismissDirection.horizontal,
+            mainButton: TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                'إغلاق',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      }
+      log('updateFile failed: $e');
+      return 0;
+    }
   }
 
   initData(AppFile file) {

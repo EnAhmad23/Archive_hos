@@ -17,6 +17,8 @@ class DbModel {
     return _db;
   }
 
+  static const String _closedMonthsTable = 'closed_months';
+
   Future<void> ensureDirectoryExists(String path) async {
     final Directory dir =
         Directory(dirname(path)); // Get the directory from the file path
@@ -45,7 +47,8 @@ class DbModel {
       Database myDB = await openDatabase(
         path,
         onCreate: _onCreate,
-        version: 1,
+        onUpgrade: _onUpgrade,
+        version: 2,
       );
       log('Database opened at $path');
       return myDB;
@@ -109,8 +112,157 @@ class DbModel {
         FOREIGN KEY (Patient_key) REFERENCES Patients(key),
          FOREIGN KEY (userId) REFERENCES users(id)
       );
+      CREATE TABLE closed_months (
+        month TEXT NOT NULL PRIMARY KEY,
+        closed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
     ''');
     log('create database');
+  }
+
+  Future<void> _onUpgrade(
+      Database database, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await database.execute('''
+        CREATE TABLE IF NOT EXISTS closed_months (
+          month TEXT NOT NULL PRIMARY KEY,
+          closed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      ''');
+    }
+  }
+
+  String _monthKey(DateTime date) {
+    return DateFormat('yyyy-MM').format(date);
+  }
+
+  Future<bool> isMonthClosed(String month) async {
+    Database? database = await db;
+    if (database == null) return false;
+    final re = await database.rawQuery(
+      'SELECT 1 FROM $_closedMonthsTable WHERE month = ? LIMIT 1',
+      [month],
+    );
+    return re.isNotEmpty;
+  }
+
+  Future<List<String>> getClosedMonths() async {
+    Database? database = await db;
+    if (database == null) return [];
+    final re = await database.rawQuery(
+      'SELECT month FROM $_closedMonthsTable ORDER BY month ASC',
+    );
+    return re.map((e) => (e['month'] as String)).toList();
+  }
+
+  Future<List<String>> getOpenMonthsWithFiles() async {
+    Database? database = await db;
+    if (database == null) return [];
+    final re = await database.rawQuery('''
+      SELECT DISTINCT strftime('%Y-%m', date) AS month
+      FROM file
+      WHERE NOT EXISTS (
+        SELECT 1 FROM $_closedMonthsTable cm
+        WHERE cm.month = strftime('%Y-%m', file.date)
+      )
+      ORDER BY month ASC
+    ''');
+
+    return re
+        .map((e) => (e['month'] as String? ?? '').trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+  }
+
+  Future<String?> getPreviousMonthWithFiles(String month) async {
+    Database? database = await db;
+    if (database == null) return null;
+    final re = await database.rawQuery('''
+      SELECT MAX(strftime('%Y-%m', date)) AS month
+      FROM file
+      WHERE strftime('%Y-%m', date) < ?
+    ''', [month]);
+
+    if (re.isEmpty) return null;
+    return re.first['month'] as String?;
+  }
+
+  Future<bool> canCloseMonth(String month) async {
+    if (await isMonthClosed(month)) return false;
+    final prev = await getPreviousMonthWithFiles(month);
+    if (prev == null) return true;
+    return await isMonthClosed(prev);
+  }
+
+  Future<int> closeMonth(String month) async {
+    Database? database = await db;
+    if (database == null) return 0;
+    if (!await canCloseMonth(month)) return 0;
+    return await database.rawInsert(
+      'INSERT OR IGNORE INTO $_closedMonthsTable (month) VALUES (?)',
+      [month],
+    );
+  }
+
+  Future<List<Map<String, Object?>>> searchFiles({
+    required String query,
+    String? category,
+    int limit = 250,
+  }) async {
+    Database? database = await db;
+    if (database == null) return [];
+    final like = '%${query.trim()}%';
+
+    if (category != null && category.trim().isNotEmpty) {
+      return await database.rawQuery('''
+        SELECT file.id,
+               users.name AS userName,
+               Patients.id AS Patient_id,
+               file.Patient_name AS Patient_name,
+               file.Category AS Category,
+               file.date,
+               file.created_at,
+               file.Patient_key
+        FROM file
+        JOIN users ON file.userId = users.id
+        JOIN Patients on file.Patient_key = Patients.key
+        WHERE file.Category = ?
+          AND (
+            CAST(file.id AS TEXT) LIKE ?
+            OR CAST(Patients.id AS TEXT) LIKE ?
+            OR file.Patient_name LIKE ?
+            OR file.Category LIKE ?
+            OR file.date LIKE ?
+            OR users.name LIKE ?
+          )
+        ORDER BY created_at DESC
+        LIMIT ?
+      ''', [category, like, like, like, like, like, like, limit]);
+    }
+
+    return await database.rawQuery('''
+      SELECT file.id,
+             users.name AS userName,
+             Patients.id AS Patient_id,
+             file.Patient_name AS Patient_name,
+             file.Category AS Category,
+             file.date,
+             file.created_at,
+             file.Patient_key
+      FROM file
+      JOIN users ON file.userId = users.id
+      JOIN Patients on file.Patient_key = Patients.key
+      WHERE (
+        CAST(file.id AS TEXT) LIKE ?
+        OR CAST(Patients.id AS TEXT) LIKE ?
+        OR file.Patient_name LIKE ?
+        OR file.Category LIKE ?
+        OR file.date LIKE ?
+        OR users.name LIKE ?
+      )
+      ORDER BY created_at DESC
+      LIMIT ?
+    ''', [like, like, like, like, like, like, limit]);
   }
 
   Future<int> addPatient(Patient patient) async {
@@ -150,7 +302,10 @@ class DbModel {
 
   Future<int> addFile(AppFile file, User user) async {
     Database? database = await db;
-    String currentMonth = DateFormat('yyyy-MM').format(file.date);
+    String currentMonth = _monthKey(file.date);
+    if (await isMonthClosed(currentMonth)) {
+      throw Exception('Month is closed');
+    }
     int key = await getPatientKey(file.patientId);
     // Query to get the max 'id' for the current month
     final result = await database?.rawQuery('''
@@ -238,6 +393,10 @@ class DbModel {
            file.Patient_key
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
+    WHERE NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
     order By created_at DESC
    
   ''');
@@ -260,6 +419,10 @@ class DbModel {
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
      
     where Category = 'شهداء'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
     order By created_at DESC ''');
 
     return re;
@@ -278,7 +441,11 @@ class DbModel {
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
      
-    where Category = 'شهداء'
+    where Category = 'جراحات'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
     order By created_at DESC ''');
 
     return re;
@@ -298,6 +465,10 @@ class DbModel {
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
     
     where Category = 'إعتداء'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
      order By created_at DESC ''');
 
     return re;
@@ -316,6 +487,10 @@ class DbModel {
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
     where Category = 'وفيات'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
      order By created_at DESC
       ''');
 
@@ -335,6 +510,10 @@ class DbModel {
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key
     where Category = 'أطفال'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
      order By created_at DESC
       ''');
 
@@ -354,6 +533,10 @@ class DbModel {
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key 
     where Category = 'نساء'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
      order By created_at DESC
       ''');
 
@@ -374,6 +557,10 @@ SELECT file.id,
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key 
     where Category = 'جرحى'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
      order By created_at DESC
       ''');
 
@@ -393,6 +580,10 @@ SELECT file.id,
     FROM file
     JOIN users ON file.userId = users.id  join Patients on file.Patient_key = Patients.key 
     where Category = 'أورام'
+    AND NOT EXISTS (
+      SELECT 1 FROM $_closedMonthsTable cm
+      WHERE cm.month = strftime('%Y-%m', file.date)
+    )
      order By created_at DESC
       ''');
 
@@ -465,8 +656,14 @@ SELECT file.id,
 
   Future<List<Map<String, Object?>>> getFilesCat(String catoger) async {
     Database? database = await db;
-    List<Map<String, Object?>> re = await database!
-        .rawQuery('''SELECT * FROM file where Category = ?''', [catoger]);
+    List<Map<String, Object?>> re = await database!.rawQuery('''
+      SELECT * FROM file
+      WHERE Category = ?
+      AND NOT EXISTS (
+        SELECT 1 FROM $_closedMonthsTable cm
+        WHERE cm.month = strftime('%Y-%m', file.date)
+      )
+    ''', [catoger]);
 
     return re;
   }
@@ -521,10 +718,8 @@ GROUP BY
   Future<int> getMaxNumFile() async {
     Database? database = await db;
     List<Map<String, Object?>> re = await database!.rawQuery('''
-      SELECT  COUNT(*) as category_count
+      SELECT COUNT(*) as category_count
       FROM file
-      ORDER BY category_count DESC
-      LIMIT 1;
 ''');
     return re.isNotEmpty ? re.first.values.first as int : 0;
   }
@@ -545,6 +740,10 @@ GROUP BY
     Database? database = await db;
     log('file data base $file');
     log('new id $newId');
+
+    if (await isMonthClosed(_monthKey(file.date))) {
+      throw Exception('Month is closed');
+    }
 
     int re = await database!.rawUpdate('''UPDATE file SET 
          id=?, 

@@ -44,8 +44,11 @@ class WomanScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(
-                            value, fileController.womans);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'نساء',
+                          openList: fileController.womans,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -54,8 +57,11 @@ class WomanScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      value, fileController.womans);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'نساء',
+                                    openList: fileController.womans,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )

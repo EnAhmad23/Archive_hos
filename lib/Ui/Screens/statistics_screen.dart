@@ -40,7 +40,7 @@ class StatisticsScreen extends StatelessWidget {
                   child: Text(
                     'إحصائيات المستخدمين',
                     style:
-                    TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
+                        TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -53,7 +53,7 @@ class StatisticsScreen extends StatelessWidget {
                 elevation: 1,
                 child: Container(
                     padding:
-                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
                     width: 1200.w,
                     height: 400.h,
                     child: BarChart(
@@ -63,17 +63,17 @@ class StatisticsScreen extends StatelessWidget {
                       BarChartData(
                         barTouchData: BarTouchData(
                             touchTooltipData: BarTouchTooltipData(
-                              getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                                return BarTooltipItem(
-                                    rod.toY.toString(),
-                                    TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold));
-                              },
-                              getTooltipColor: (group) =>
+                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                            return BarTooltipItem(
+                                '${(rod.toY)}',
+                                TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold));
+                          },
+                          getTooltipColor: (group) =>
                               Colors.grey[800] ?? const Color(0x00000002),
-                            )),
+                        )),
                         backgroundColor: Colors.grey[200],
                         minY: 0,
                         maxY: fileController.maxNum,
@@ -91,7 +91,7 @@ class StatisticsScreen extends StatelessWidget {
                               ),
                             )),
                         barGroups: fileController.numberOfFileOfUsers?.map(
-                              (map) {
+                          (map) {
                             final categoryIndex = fileController
                                 .numberOfFileOfUsers!
                                 .indexWhere((item) {
@@ -132,7 +132,7 @@ class StatisticsScreen extends StatelessWidget {
                               getTitlesWidget: (value, meta) {
                                 final index = value.toInt();
                                 if (fileController.numberOfFileOfUsers !=
-                                    null &&
+                                        null &&
                                     index <
                                         fileController
                                             .numberOfFileOfUsers!.length) {
@@ -141,7 +141,7 @@ class StatisticsScreen extends StatelessWidget {
 
                                   // Split the username into lines (you can modify this as per your requirement)
                                   final formattedUserName =
-                                  userName.toString().replaceAll(' ', '\n');
+                                      userName.toString().replaceAll(' ', '\n');
 
                                   return SideTitleWidget(
                                     axisSide: meta.axisSide,
@@ -176,7 +176,7 @@ class StatisticsScreen extends StatelessWidget {
                   child: Text(
                     'إحصائيات الفئات',
                     style:
-                    TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
+                        TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -189,12 +189,11 @@ class StatisticsScreen extends StatelessWidget {
                 elevation: 1,
                 child: Container(
                   padding:
-                  EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
                   width: 1200.w,
                   height: 400.h,
                   child: BarChart(
-                    duration:
-                    const Duration(milliseconds: 150), // Optional
+                    duration: const Duration(milliseconds: 150), // Optional
                     curve: Curves.easeInOut,
                     BarChartData(
                       borderData: FlBorderData(
@@ -212,27 +211,27 @@ class StatisticsScreen extends StatelessWidget {
                       ),
                       barTouchData: BarTouchData(
                           touchTooltipData: BarTouchTooltipData(
-                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                              return BarTooltipItem(
-                                  rod.toY.toString(),
-                                  TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold));
-                            },
-                            getTooltipColor: (group) =>
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          return BarTooltipItem(
+                              '${(rod.toY).toInt()}',
+                              TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold));
+                        },
+                        getTooltipColor: (group) =>
                             Colors.grey[800] ?? const Color(0x00000002),
-                          )),
+                      )),
                       // alignment: BarChartAlignment.spaceAround,
                       backgroundColor: Colors.grey[200],
                       minY: 0,
-                      maxY: fileController.maxNum +1,
+                      maxY: fileController.maxNum + 1,
                       gridData: const FlGridData(show: false),
                       // /  borderData: FlBorderData(show: false),
                       barGroups: fileController.numForCatoger?.map(
-                            (map) {
+                        (map) {
                           final categoryIndex =
-                          fileController.numForCatoger!.indexWhere((item) {
+                              fileController.numForCatoger!.indexWhere((item) {
                             return item['Category'] == map['Category'];
                           });
 
@@ -290,16 +289,16 @@ class StatisticsScreen extends StatelessWidget {
                             ),
                           ),
                           rightTitles: AxisTitles(
-                            // axisNameWidget: const Text('عدد الحالات'),
+                              // axisNameWidget: const Text('عدد الحالات'),
                               sideTitles: SideTitles(
-                                reservedSize: 60.sp,
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  return SideTitleWidget(
-                                      axisSide: meta.axisSide,
-                                      child: Text(meta.formattedValue));
-                                },
-                              ))),
+                            reservedSize: 60.sp,
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              return SideTitleWidget(
+                                  axisSide: meta.axisSide,
+                                  child: Text(meta.formattedValue));
+                            },
+                          ))),
                     ),
                   ),
                 ),

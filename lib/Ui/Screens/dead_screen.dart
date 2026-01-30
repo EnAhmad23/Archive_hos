@@ -44,7 +44,11 @@ class DeadScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(value, fileController.daeds);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'شهداء',
+                          openList: fileController.daeds,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -53,8 +57,11 @@ class DeadScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      '', fileController.daeds);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'شهداء',
+                                    openList: fileController.daeds,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )

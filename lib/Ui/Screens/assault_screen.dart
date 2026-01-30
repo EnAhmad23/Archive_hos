@@ -44,8 +44,11 @@ class AssaultScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(
-                            value, fileController.assault);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'إعتداء',
+                          openList: fileController.assault,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -54,8 +57,11 @@ class AssaultScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      '', fileController.assault);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'إعتداء',
+                                    openList: fileController.assault,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )
@@ -71,7 +77,7 @@ class AssaultScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              AddFileButton(index: 7, fileController: fileController)
+              AddFileButton(index: 6, fileController: fileController)
             ],
           ),
           SizedBox(height: 20.h),

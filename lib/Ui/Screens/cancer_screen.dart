@@ -44,8 +44,11 @@ class CancerScreen extends StatelessWidget {
                     return TextFormField(
                       onChanged: (value) {
                         textFieldValue.value = value;
-                        fileController.filterItems(
-                            value, fileController.cancers);
+                        fileController.searchFilesInCategory(
+                          value,
+                          category: 'أورام',
+                          openList: fileController.cancers,
+                        );
                       },
                       controller: fileController.searchController,
                       decoration: InputDecoration(
@@ -54,8 +57,11 @@ class CancerScreen extends StatelessWidget {
                                 onPressed: () {
                                   fileController.searchController.clear();
                                   textFieldValue.value = '';
-                                  fileController.filterItems(
-                                      value, fileController.cancers);
+                                  fileController.searchFilesInCategory(
+                                    '',
+                                    category: 'أورام',
+                                    openList: fileController.cancers,
+                                  );
                                 },
                                 icon: Icon(Icons.clear, size: 17.sp),
                               )
